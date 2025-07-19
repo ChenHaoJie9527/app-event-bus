@@ -1,0 +1,32 @@
+{
+  "name": "small-event-system",
+  "version": "0.0.1",
+  "description": "Small event system",
+  "author": "Small Event System",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "scripts": {
+    "build": "tsup",
+    "test:watch": "vitest",
+    "lint": "biome check --unsafe .",
+    "format": "biome format --write --unsafe .",
+    "prepare": "husky install"
+  },
+  "files": [
+    "dist"
+  ],
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "devDependencies": {
+    "@biomejs/biome": "2.1.2",
+    "husky": "^9.1.7",
+    "knip": "^5.62.0",
+    "tsup": "^8.5.0",
+    "typescript": "^5.8.3",
+    "ultracite": "5.0.46",
+    "vitest": "^3.2.4"
+  }
+}
