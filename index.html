@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventBus - Type-Safe Event System</title>
+    <meta name="description" content="A lightweight, type-safe event bus system built with TypeScript, designed for modern JavaScript applications.">
+    <meta name="keywords" content="event bus, typescript, javascript, observer pattern, event-driven">
+    <meta name="author" content="EventBus Team">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="EventBus - Type-Safe Event System">
+    <meta property="og:description" content="Lightweight, type-safe event bus system for modern JavaScript applications">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://eventbus.dev">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="EventBus - Type-Safe Event System">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="/assets/script-CmH3FRxs.js" as="script">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  <link rel="stylesheet" crossorigin href="/assets/main-BQBX-9ct.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <h1>EventBus</h1>
+                <span class="version">v1.0.0</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#examples">Examples</a></li>
+                <li><a href="#api">API</a></li>
+                <li><a href="#guide">Guide</a></li>
+                <li><a href="https://github.com/your-repo" target="_blank" rel="noopener">GitHub</a></li>
+            </ul>
+            <button class="nav-toggle" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <main>
+        <!-- Hero Section -->
+        <section id="home" class="hero">
+            <div class="hero-container">
+                <div class="hero-content">
+                    <h1 class="hero-title">
+                        Type-Safe Event System
+                        <span class="highlight">for Modern Apps</span>
+                    </h1>
+                    <p class="hero-description">
+                        A lightweight, type-safe event bus system built with TypeScript. 
+                        Designed around the Observer Pattern with separation of concerns.
+                    </p>
+                    <div class="hero-buttons">
+                        <button class="btn btn-primary" onclick="scrollToSection('examples')">
+                            View Examples
+                        </button>
+                        <button class="btn btn-secondary" onclick="scrollToSection('api')">
+                            API Reference
+                        </button>
+                    </div>
+                </div>
+                <div class="hero-code">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Quick Start</span>
+                            <button class="copy-btn" onclick="copyCode('quick-start-code')">Copy</button>
+                        </div>
+                        <pre><code id="quick-start-code" class="language-typescript">import { EventBus } from 'small-event-system';
+
+const eventBus = new EventBus();
+
+// Register listener
+const listenerId = eventBus.on('user:login', (data) => {
+  console.log('User logged in:', data);
+});
+
+// Emit event
+await eventBus.emit('user:login', { 
+  userId: '123', 
+  timestamp: Date.now() 
+});</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="features">
+            <div class="container">
+                <h2 class="section-title">Why EventBus?</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🔒</div>
+                        <h3>Type Safety</h3>
+                        <p>Full TypeScript support with compile-time type checking for events and data.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">⚡</div>
+                        <h3>Async Support</h3>
+                        <p>Handle both synchronous and asynchronous listeners with Promise.all.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🛡️</div>
+                        <h3>Error Isolation</h3>
+                        <p>One listener's error doesn't prevent others from executing.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🎯</div>
+                        <h3>Precise Control</h3>
+                        <p>Remove listeners by unique ID for better memory management.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🚀</div>
+                        <h3>High Performance</h3>
+                        <p>Concurrent listener execution for optimal performance.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📦</div>
+                        <h3>Zero Dependencies</h3>
+                        <p>Lightweight with no external dependencies.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Examples Section -->
+        <section id="examples" class="examples">
+            <div class="container">
+                <h2 class="section-title">Live Examples</h2>
+                
+                <!-- Basic Example -->
+                <div class="example-card">
+                    <h3>Basic Event Handling</h3>
+                    <p>Simple event registration and emission with type safety.</p>
+                    <div class="example-content">
+                        <div class="code-tabs">
+                            <button class="tab-btn active" onclick="switchTab('basic-code', 'basic-demo')">Code</button>
+                            <button class="tab-btn" onclick="switchTab('basic-demo', 'basic-code')">Demo</button>
+                        </div>
+                        <div id="basic-code" class="tab-content active">
+                            <pre><code class="language-typescript">// Define event types
+interface AppEventMap {
+  'user:login': { userId: string; timestamp: number; };
+  'user:logout': { userId: string; reason?: string; };
+}
+
+// Create typed EventBus
+const eventBus = new EventBus<AppEventMap>();
+
+// Register listeners
+eventBus.on('user:login', (data) => {
+  console.log('User logged in:', data.userId);
+});
+
+eventBus.on('user:logout', (data) => {
+  console.log('User logged out:', data.userId);
+});
+
+// Emit events
+await eventBus.emit('user:login', {
+  userId: 'user123',
+  timestamp: Date.now()
+});</code></pre>
+                        </div>
+                        <div id="basic-demo" class="tab-content">
+                            <div class="demo-container">
+                                <button class="demo-btn" onclick="runBasicDemo()">Run Demo</button>
+                                <div class="demo-output" id="basic-output">
+                                    <p>Click "Run Demo" to see the example in action...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Multiple Listeners Example -->
+                <div class="example-card">
+                    <h3>Multiple Listeners</h3>
+                    <p>Register multiple listeners for the same event and see them execute concurrently.</p>
+                    <div class="example-content">
+                        <div class="code-tabs">
+                            <button class="tab-btn active" onclick="switchTab('multiple-code', 'multiple-demo')">Code</button>
+                            <button class="tab-btn" onclick="switchTab('multiple-demo', 'multiple-code')">Demo</button>
+                        </div>
+                        <div id="multiple-code" class="tab-content active">
+                            <pre><code class="language-typescript">// Multiple listeners for same event
+const id1 = eventBus.on('data:fetch', (data) => {
+  console.log('Handler 1:', data.endpoint);
+});
+
+const id2 = eventBus.on('data:fetch', async (data) => {
+  await new Promise(resolve => setTimeout(resolve, 100));
+  console.log('Handler 2 (async):', data.endpoint);
+});
+
+const id3 = eventBus.on('data:fetch', (data) => {
+  console.log('Handler 3:', data.endpoint);
+});
+
+// All listeners execute concurrently
+await eventBus.emit('data:fetch', {
+  endpoint: '/api/users'
+});</code></pre>
+                        </div>
+                        <div id="multiple-demo" class="tab-content">
+                            <div class="demo-container">
+                                <button class="demo-btn" onclick="runMultipleDemo()">Run Demo</button>
+                                <div class="demo-output" id="multiple-output">
+                                    <p>Click "Run Demo" to see multiple listeners in action...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Error Handling Example -->
+                <div class="example-card">
+                    <h3>Error Handling</h3>
+                    <p>See how EventBus handles errors gracefully without stopping other listeners.</p>
+                    <div class="example-content">
+                        <div class="code-tabs">
+                            <button class="tab-btn active" onclick="switchTab('error-code', 'error-demo')">Code</button>
+                            <button class="tab-btn" onclick="switchTab('error-demo', 'error-code')">Demo</button>
+                        </div>
+                        <div id="error-code" class="tab-content active">
+                            <pre><code class="language-typescript">// Listener that throws an error
+eventBus.on('user:login', () => {
+  throw new Error('Login failed');
+});
+
+// Listener that executes normally
+eventBus.on('user:login', (data) => {
+  console.log('This still executes:', data.userId);
+});
+
+// Both listeners are called
+try {
+  await eventBus.emit('user:login', {
+    userId: 'user123',
+    timestamp: Date.now()
+  });
+} catch (error) {
+  console.log('Error caught:', error.message);
+}</code></pre>
+                        </div>
+                        <div id="error-demo" class="tab-content">
+                            <div class="demo-container">
+                                <button class="demo-btn" onclick="runErrorDemo()">Run Demo</button>
+                                <div class="demo-output" id="error-output">
+                                    <p>Click "Run Demo" to see error handling in action...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- API Section -->
+        <section id="api" class="api">
+            <div class="container">
+                <h2 class="section-title">API Reference</h2>
+                <div class="api-grid">
+                    <div class="api-card">
+                        <h3>EventBus Constructor</h3>
+                        <pre><code class="language-typescript">new EventBus&lt;EventMap = BaseEventMap&gt;()</code></pre>
+                        <p>Creates a new EventBus instance with optional type parameter for custom event maps.</p>
+                    </div>
+                    <div class="api-card">
+                        <h3>on(event, listener)</h3>
+                        <pre><code class="language-typescript">on&lt;T extends keyof EventMap&gt;(
+  event: T,
+  listener: (data: EventMap&#91;T&#93;) => void | Promise&lt;void&gt;
+): string</code></pre>
+                        <p>Registers a listener for a specific event. Returns a unique listener ID.</p>
+                    </div>
+                    <div class="api-card">
+                        <h3>emit(event, data)</h3>
+                        <pre><code class="language-typescript">emit&lt;T extends keyof EventMap&gt;(
+  event: T,
+  data: EventMap&#91;T&#93;
+): Promise&lt;void&gt;</code></pre>
+                        <p>Emits an event and calls all registered listeners concurrently.</p>
+                    </div>
+                    <div class="api-card">
+                        <h3>off(eventName, listenerId)</h3>
+                        <pre><code class="language-typescript">off&lt;T extends keyof EventMap&gt;(
+  eventName: T,
+  listenerId: string
+): boolean</code></pre>
+                        <p>Removes a specific listener by ID. Returns true if listener was removed.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Guide Section -->
+        <section id="guide" class="guide">
+            <div class="container">
+                <h2 class="section-title">Getting Started Guide</h2>
+                <div class="guide-steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h3>Install EventBus</h3>
+                            <pre><code class="language-bash">npm install small-event-system</code></pre>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h3>Define Event Types</h3>
+                            <pre><code class="language-typescript">interface AppEventMap {
+  'user:login': { userId: string; timestamp: number; };
+  'user:logout': { userId: string; reason?: string; };
+}</code></pre>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h3>Create EventBus Instance</h3>
+                            <pre><code class="language-typescript">const eventBus = new EventBus&lt;AppEventMap&gt;();</code></pre>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <h3>Register Listeners</h3>
+                            <pre><code class="language-typescript">const listenerId = eventBus.on('user:login', (data) => {
+  console.log('User logged in:', data.userId);
+});</code></pre>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">5</div>
+                        <div class="step-content">
+                            <h3>Emit Events</h3>
+                            <pre><code class="language-typescript">await eventBus.emit('user:login', {
+  userId: 'user123',
+  timestamp: Date.now()
+});</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 EventBus. Built with ❤️ for modern JavaScript applications.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html> 
