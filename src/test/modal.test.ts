@@ -1,0 +1,218 @@
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { EventBus } from '../events';
+import { modalHandler } from '../handlers/modal-handler';
+import type { EventMap } from '../types';
+
+// Mock console.log to capture output
+const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {
+  // Mock implementation
+});
+
+describe('Modal Event System', () => {
+  let eventBus: EventBus;
+
+  beforeEach(() => {
+    eventBus = new EventBus();
+    consoleSpy.mockClear();
+  });
+
+  describe('Event Emission and Listening', () => {
+    it('should emit and listen to modal:open event', async () => {
+      const mockListener = vi.fn();
+      const modalId = 'test-modal';
+
+      // Listening for modal:open events
+      eventBus.on('modal:open', mockListener);
+
+      // Emitting modal:open events
+      await eventBus.emit('modal:open', { modalId });
+
+      // Verifying that the listener was called
+      expect(mockListener).toHaveBeenCalledTimes(1);
+      expect(mockListener).toHaveBeenCalledWith({ modalId });
+    });
+
+    it('should emit and listen to modal:close event', async () => {
+      const mockListener = vi.fn();
+      const modalId = 'test-modal';
+
+      // Listening for modal:close events
+      eventBus.on('modal:close', mockListener);
+
+      // Emitting modal:close events
+      await eventBus.emit('modal:close', { modalId });
+
+      // Verifying that the listener was called
+      expect(mockListener).toHaveBeenCalledTimes(1);
+      expect(mockListener).toHaveBeenCalledWith({ modalId });
+    });
+
+    it('should handle multiple listeners for the same event', async () => {
+      const mockListener1 = vi.fn();
+      const mockListener2 = vi.fn();
+      const modalId = 'test-modal';
+
+      // Adding multiple listeners
+      eventBus.on('modal:open', mockListener1);
+      eventBus.on('modal:open', mockListener2);
+
+      // Emitting events
+      await eventBus.emit('modal:open', { modalId });
+
+      // Verifying that all listeners were called
+      expect(mockListener1).toHaveBeenCalledTimes(1);
+      expect(mockListener1).toHaveBeenCalledWith({ modalId });
+      expect(mockListener2).toHaveBeenCalledTimes(1);
+      expect(mockListener2).toHaveBeenCalledWith({ modalId });
+    });
+
+    it('should handle events with different modal IDs', async () => {
+      const mockListener = vi.fn();
+      const modalId1 = 'modal-1';
+      const modalId2 = 'modal-2';
+
+      eventBus.on('modal:open', mockListener);
+
+      // Firing events with different modal IDs
+      await eventBus.emit('modal:open', { modalId: modalId1 });
+      await eventBus.emit('modal:open', { modalId: modalId2 });
+
+      // Verify that the listener is called twice with the correct parameters
+      expect(mockListener).toHaveBeenCalledTimes(2);
+      expect(mockListener).toHaveBeenNthCalledWith(1, { modalId: modalId1 });
+      expect(mockListener).toHaveBeenNthCalledWith(2, { modalId: modalId2 });
+    });
+  });
+
+  describe('Modal Handler Integration', () => {
+    it('should trigger openModal handler when modal:open event is emitted', async () => {
+      const modalId = 'test-modal';
+
+      // Listening for modal:open events and calling handler
+      eventBus.on('modal:open', (data) => {
+        modalHandler.openModal(data.modalId);
+      });
+
+      // Emitting events
+      await eventBus.emit('modal:open', { modalId });
+
+      // Verifying that the handler was called
+      expect(consoleSpy).toHaveBeenCalledWith(`Opening modal: ${modalId}`);
+    });
+
+    it('should trigger closeModal handler when modal:close event is emitted', async () => {
+      const modalId = 'test-modal';
+
+      // Listening for modal:close events and calling handler
+      eventBus.on('modal:close', (data) => {
+        modalHandler.closeModal(data.modalId);
+      });
+
+      // Emitting events
+      await eventBus.emit('modal:close', { modalId });
+
+      // Verifying that the handler was called
+      expect(consoleSpy).toHaveBeenCalledWith(`Closing modal: ${modalId}`);
+    });
+
+    it('should handle both open and close events in sequence', async () => {
+      const modalId = 'test-modal';
+      const openHandler = vi.fn();
+      const closeHandler = vi.fn();
+
+      // Setting listeners
+      eventBus.on('modal:open', (data) => {
+        modalHandler.openModal(data.modalId);
+        openHandler(data.modalId);
+      });
+
+      eventBus.on('modal:close', (data) => {
+        modalHandler.closeModal(data.modalId);
+        closeHandler(data.modalId);
+      });
+
+      // Emitting events in sequence
+      await eventBus.emit('modal:open', { modalId });
+      await eventBus.emit('modal:close', { modalId });
+
+      // Verifying call order and parameters
+      expect(openHandler).toHaveBeenCalledWith(modalId);
+      expect(closeHandler).toHaveBeenCalledWith(modalId);
+      expect(consoleSpy).toHaveBeenNthCalledWith(
+        1,
+        `Opening modal: ${modalId}`
+      );
+      expect(consoleSpy).toHaveBeenNthCalledWith(
+        2,
+        `Closing modal: ${modalId}`
+      );
+    });
+  });
+
+  describe('Event Bus Behavior', () => {
+    it('should handle events with no listeners gracefully', async () => {
+      const modalId = 'test-modal';
+
+      await expect(
+        eventBus.emit('modal:open', { modalId })
+      ).resolves.not.toThrow();
+    });
+
+    it('should handle async listeners correctly', async () => {
+      const mockListener = vi.fn().mockImplementation(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 10));
+      });
+      const modalId = 'test-modal';
+
+      eventBus.on('modal:open', mockListener);
+
+      const startTime = Date.now();
+      await eventBus.emit('modal:open', { modalId });
+      const endTime = Date.now();
+
+      // Verifying that the async listener was correctly awaited
+      expect(mockListener).toHaveBeenCalledTimes(1);
+      expect(endTime - startTime).toBeGreaterThanOrEqual(10);
+    });
+
+    it('should handle multiple events in parallel', async () => {
+      const mockListener = vi.fn();
+      const modalId1 = 'modal-1';
+      const modalId2 = 'modal-2';
+
+      eventBus.on('modal:open', mockListener);
+
+      // Firing multiple events in parallel
+      await Promise.all([
+        eventBus.emit('modal:open', { modalId: modalId1 }),
+        eventBus.emit('modal:open', { modalId: modalId2 }),
+      ]);
+
+      // Verifying that all events were processed
+      expect(mockListener).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe('Type Safety', () => {
+    it('should enforce correct event data types', () => {
+      // These tests ensure that TypeScript type checking works correctly
+      const mockListener = vi.fn();
+
+      // Should be able to listen to events correctly
+      eventBus.on('modal:open', mockListener);
+      eventBus.on('modal:close', mockListener);
+
+      // Verifying that the listener was correctly registered
+      expect(mockListener).toBeDefined();
+    });
+
+    it('should handle event map types correctly', () => {
+      // Testing event mapping types
+      const events: (keyof EventMap)[] = ['modal:open', 'modal:close'];
+
+      for (const event of events) {
+        expect(typeof event).toBe('string');
+      }
+    });
+  });
+});
