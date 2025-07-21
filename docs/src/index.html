@@ -287,7 +287,7 @@ try {
                         <h3>on(event, listener)</h3>
                         <pre><code class="language-typescript">on&lt;T extends keyof EventMap&gt;(
   event: T,
-  listener: (data: EventMap[T]) => void | Promise&lt;void&gt;
+  listener: (data: EventMap&#91;T&#93;) => void | Promise&lt;void&gt;
 ): string</code></pre>
                         <p>Registers a listener for a specific event. Returns a unique listener ID.</p>
                     </div>
@@ -295,7 +295,7 @@ try {
                         <h3>emit(event, data)</h3>
                         <pre><code class="language-typescript">emit&lt;T extends keyof EventMap&gt;(
   event: T,
-  data: EventMap[T]
+  data: EventMap&#91;T&#93;
 ): Promise&lt;void&gt;</code></pre>
                         <p>Emits an event and calls all registered listeners concurrently.</p>
                     </div>
