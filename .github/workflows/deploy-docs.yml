@@ -23,8 +23,8 @@ jobs:
     
     - name: Install dependencies
       run: |
-        npm ci
-        cd docs && npm ci
+        npm install
+        cd docs && npm install
     
     - name: Build documentation
       run: npm run build:docs
