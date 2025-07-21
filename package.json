@@ -13,20 +13,35 @@
     "test:watch": "vitest",
     "lint": "biome check --unsafe .",
     "format": "biome format --write .",
+    "format:html": "prettier --write \"docs/**/*.html\"",
     "prepare": "husky install",
     "dev:docs": "cd docs && npm run dev",
     "build:docs": "cd docs && npm run build",
     "preview:docs": "cd docs && npm run preview"
   },
-  "files": [
-    "dist"
-  ],
+  "files": {
+    "includes": [
+      "src/api/**/*",
+      "src/components/**/*",
+      "src/constants/**/*",
+      "src/features/**/*",
+      "src/hooks/**/*",
+      "src/pages/**/*",
+      "src/renderer/**/*",
+      "src/router/**/*",
+      "src/store/**/*",
+      "src/utils/**/*",
+      "src/workers/**/*",
+      "docs/**/*"
+    ]
+  },
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "devDependencies": {
     "@biomejs/biome": "2.1.2",
     "husky": "^9.1.7",
     "knip": "^5.62.0",
+    "prettier": "^3.6.2",
     "tsup": "^8.5.0",
     "typescript": "^5.8.3",
     "ultracite": "5.0.46",
