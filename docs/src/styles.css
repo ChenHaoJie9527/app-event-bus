@@ -7,24 +7,26 @@
   --success-color: #10b981;
   --warning-color: #f59e0b;
   --error-color: #ef4444;
-  
+
   --background-color: #ffffff;
   --surface-color: #f8fafc;
   --text-color: #1f2937;
   --text-secondary: #6b7280;
   --border-color: #e5e7eb;
   --border-light: #f3f4f6;
-  
+
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  
+  --shadow-lg:
+    0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
   --radius-sm: 0.375rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
-  
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-mono: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+
+  --font-sans:
+    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "Monaco", "Menlo", "Ubuntu Mono", monospace;
 }
 
 /* Dark theme support */
@@ -58,16 +60,29 @@ body {
 }
 
 /* Typography */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-weight: 600;
   line-height: 1.25;
   margin-bottom: 1rem;
 }
 
-h1 { font-size: 2.5rem; }
-h2 { font-size: 2rem; }
-h3 { font-size: 1.5rem; }
-h4 { font-size: 1.25rem; }
+h1 {
+  font-size: 2.5rem;
+}
+h2 {
+  font-size: 2rem;
+}
+h3 {
+  font-size: 1.5rem;
+}
+h4 {
+  font-size: 1.25rem;
+}
 
 p {
   margin-bottom: 1rem;
@@ -161,14 +176,18 @@ p {
 /* Hero Section */
 .hero {
   padding: 6rem 0;
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--primary-color) 0%,
+    var(--accent-color) 100%
+  );
   color: white;
   position: relative;
   overflow: hidden;
 }
 
 .hero::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -324,7 +343,9 @@ p {
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-color);
   text-align: center;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
 }
 
 .feature-card:hover {
@@ -547,38 +568,38 @@ p {
   .nav-menu {
     display: none;
   }
-  
+
   .nav-toggle {
     display: flex;
   }
-  
+
   .hero-container {
     grid-template-columns: 1fr;
     gap: 2rem;
     text-align: center;
   }
-  
+
   .hero-title {
     font-size: 2.5rem;
   }
-  
+
   .hero-buttons {
     justify-content: center;
   }
-  
+
   .features-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .api-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .step {
     flex-direction: column;
     text-align: center;
   }
-  
+
   .step-number {
     align-self: center;
   }
@@ -588,23 +609,23 @@ p {
   .container {
     padding: 0 0.5rem;
   }
-  
+
   .hero {
     padding: 4rem 0;
   }
-  
+
   .hero-title {
     font-size: 2rem;
   }
-  
+
   .section-title {
     font-size: 2rem;
   }
-  
+
   .example-card {
     padding: 1rem;
   }
-  
+
   .api-card {
     padding: 1rem;
   }
@@ -674,7 +695,7 @@ a:focus {
 }
 
 .loading::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -691,4 +712,4 @@ a:focus {
   to {
     transform: rotate(360deg);
   }
-} 
+}

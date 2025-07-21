@@ -1,15 +1,15 @@
 {
-	"project": ["src/**/*.ts"],
-	"ignore": ["dist/**", "node_modules/**", "src/test/**", "examples/**"],
-	"tsup": {
-		"config": "tsup.config.ts",
-		"entry": ["src/index.ts"]
-	},
-	"vitest": {
-		"config": "vitest.config.ts"
-	},
-	"biome": {
-		"config": "biome.jsonc"
-	},
-	"ignoreDependencies": ["husky"]
+  "project": ["src/**/*.ts"],
+  "ignore": ["dist/**", "node_modules/**", "src/test/**", "examples/**"],
+  "tsup": {
+    "config": "tsup.config.ts",
+    "entry": ["src/index.ts"]
+  },
+  "vitest": {
+    "config": "vitest.config.ts"
+  },
+  "biome": {
+    "config": "biome.jsonc"
+  },
+  "ignoreDependencies": ["husky"]
 }

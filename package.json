@@ -12,7 +12,7 @@
     "build": "tsup",
     "test:watch": "vitest",
     "lint": "biome check --unsafe .",
-    "format": "biome format --write --unsafe .",
+    "format": "biome format --write .",
     "prepare": "husky install",
     "dev:docs": "cd docs && npm run dev",
     "build:docs": "cd docs && npm run build",
