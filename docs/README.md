@@ -43,7 +43,6 @@ docs/
 - **Interactive Examples**: Live demos of EventBus functionality
 - **TypeScript Support**: Syntax highlighting for TypeScript code
 - **Responsive Design**: Works on desktop and mobile devices
-- **Dark Mode**: Automatic dark mode support
 - **Performance Optimized**: Fast loading with modern build tools
 
 ## 🎨 Customization
@@ -131,10 +130,3 @@ npm run build:docs && npm run preview:docs
 - Verify responsive design
 - Check accessibility
 - Test performance
-
-## 📚 Resources
-
-- [Vite Documentation](https://vitejs.dev/)
-- [Prism.js](https://prismjs.com/) - Syntax highlighting
-- [GitHub Pages](https://pages.github.com/) - Hosting
-- [EventBus Project](../README.md) - Main project 
