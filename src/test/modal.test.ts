@@ -21,8 +21,14 @@ describe('Modal Event System', () => {
       const mockListener = vi.fn();
       const modalId = 'test-modal';
 
-      // Listening for modal:open events
-      eventBus.on('modal:open', mockListener);
+      // Listening for modal:open events using registerEvents
+      eventBus.registerEvents([
+        {
+          event: 'modal:open',
+          listener: mockListener,
+          description: 'Test modal open listener'
+        }
+      ]);
 
       // Emitting modal:open events
       await eventBus.emit('modal:open', { modalId });
@@ -36,8 +42,14 @@ describe('Modal Event System', () => {
       const mockListener = vi.fn();
       const modalId = 'test-modal';
 
-      // Listening for modal:close events
-      eventBus.on('modal:close', mockListener);
+      // Listening for modal:close events using registerEvents
+      eventBus.registerEvents([
+        {
+          event: 'modal:close',
+          listener: mockListener,
+          description: 'Test modal close listener'
+        }
+      ]);
 
       // Emitting modal:close events
       await eventBus.emit('modal:close', { modalId });
@@ -52,9 +64,19 @@ describe('Modal Event System', () => {
       const mockListener2 = vi.fn();
       const modalId = 'test-modal';
 
-      // Adding multiple listeners
-      eventBus.on('modal:open', mockListener1);
-      eventBus.on('modal:open', mockListener2);
+      // Adding multiple listeners using registerEvents
+      eventBus.registerEvents([
+        {
+          event: 'modal:open',
+          listener: mockListener1,
+          description: 'First modal open listener'
+        },
+        {
+          event: 'modal:open',
+          listener: mockListener2,
+          description: 'Second modal open listener'
+        }
+      ]);
 
       // Emitting events
       await eventBus.emit('modal:open', { modalId });
@@ -71,7 +93,13 @@ describe('Modal Event System', () => {
       const modalId1 = 'modal-1';
       const modalId2 = 'modal-2';
 
-      eventBus.on('modal:open', mockListener);
+      eventBus.registerEvents([
+        {
+          event: 'modal:open',
+          listener: mockListener,
+          description: 'Test modal open listener'
+        }
+      ]);
 
       // Firing events with different modal IDs
       await eventBus.emit('modal:open', { modalId: modalId1 });
@@ -88,10 +116,16 @@ describe('Modal Event System', () => {
     it('should trigger openModal handler when modal:open event is emitted', async () => {
       const modalId = 'test-modal';
 
-      // Listening for modal:open events and calling handler
-      eventBus.on('modal:open', (data) => {
-        modalHandler.openModal(data.modalId);
-      });
+      // Listening for modal:open events and calling handler using registerEvents
+      eventBus.registerEvents([
+        {
+          event: 'modal:open',
+          listener: (data) => {
+            modalHandler.openModal(data.modalId);
+          },
+          description: 'Modal open handler integration'
+        }
+      ]);
 
       // Emitting events
       await eventBus.emit('modal:open', { modalId });
@@ -103,10 +137,16 @@ describe('Modal Event System', () => {
     it('should trigger closeModal handler when modal:close event is emitted', async () => {
       const modalId = 'test-modal';
 
-      // Listening for modal:close events and calling handler
-      eventBus.on('modal:close', (data) => {
-        modalHandler.closeModal(data.modalId);
-      });
+      // Listening for modal:close events and calling handler using registerEvents
+      eventBus.registerEvents([
+        {
+          event: 'modal:close',
+          listener: (data) => {
+            modalHandler.closeModal(data.modalId);
+          },
+          description: 'Modal close handler integration'
+        }
+      ]);
 
       // Emitting events
       await eventBus.emit('modal:close', { modalId });
@@ -120,16 +160,28 @@ describe('Modal Event System', () => {
       const openHandler = vi.fn();
       const closeHandler = vi.fn();
 
-      // Setting listeners
-      eventBus.on('modal:open', (data) => {
-        modalHandler.openModal(data.modalId);
-        openHandler(data.modalId);
-      });
+      // Setting listeners using registerEvents
+      eventBus.registerEvents([
+        {
+          event: 'modal:open',
+          listener: (data) => {
+            modalHandler.openModal(data.modalId);
+            openHandler(data.modalId);
+          },
+          description: 'Modal open sequence handler'
+        },
+        {
+          event: 'modal:close',
+          listener: (data) => {
+            modalHandler.closeModal(data.modalId);
+            closeHandler(data.modalId);
+          },
+          description: 'Modal close sequence handler'
+        }
+      ]);
 
-      eventBus.on('modal:close', (data) => {
-        modalHandler.closeModal(data.modalId);
-        closeHandler(data.modalId);
-      });
+      // Clear the console spy to remove registration messages
+      consoleSpy.mockClear();
 
       // Emitting events in sequence
       await eventBus.emit('modal:open', { modalId });
@@ -153,9 +205,25 @@ describe('Modal Event System', () => {
     it('should handle events with no listeners gracefully', async () => {
       const modalId = 'test-modal';
 
+      // Register the event but don't add any listeners
+      eventBus.registerEvents([
+        {
+          event: 'modal:open',
+          listener: () => {
+            // Empty listener
+          },
+          description: 'Empty listener'
+        }
+      ]);
+
+      // Remove the listener to test no listeners scenario
+      const listenerIds = eventBus.getRegisteredEvents();
+      eventBus.clear();
+
+      // Now try to emit without any listeners
       await expect(
         eventBus.emit('modal:open', { modalId })
-      ).resolves.not.toThrow();
+      ).rejects.toThrow('Event "modal:open" is not registered');
     });
 
     it('should handle async listeners correctly', async () => {
@@ -164,7 +232,13 @@ describe('Modal Event System', () => {
       });
       const modalId = 'test-modal';
 
-      eventBus.on('modal:open', mockListener);
+      eventBus.registerEvents([
+        {
+          event: 'modal:open',
+          listener: mockListener,
+          description: 'Async modal listener'
+        }
+      ]);
 
       const startTime = Date.now();
       await eventBus.emit('modal:open', { modalId });
@@ -180,7 +254,13 @@ describe('Modal Event System', () => {
       const modalId1 = 'modal-1';
       const modalId2 = 'modal-2';
 
-      eventBus.on('modal:open', mockListener);
+      eventBus.registerEvents([
+        {
+          event: 'modal:open',
+          listener: mockListener,
+          description: 'Parallel events listener'
+        }
+      ]);
 
       // Firing multiple events in parallel
       await Promise.all([
@@ -198,9 +278,19 @@ describe('Modal Event System', () => {
       // These tests ensure that TypeScript type checking works correctly
       const mockListener = vi.fn();
 
-      // Should be able to listen to events correctly
-      eventBus.on('modal:open', mockListener);
-      eventBus.on('modal:close', mockListener);
+      // Should be able to register events correctly
+      eventBus.registerEvents([
+        {
+          event: 'modal:open',
+          listener: mockListener,
+          description: 'Type safety test'
+        },
+        {
+          event: 'modal:close',
+          listener: mockListener,
+          description: 'Type safety test'
+        }
+      ]);
 
       // Verifying that the listener was correctly registered
       expect(mockListener).toBeDefined();
