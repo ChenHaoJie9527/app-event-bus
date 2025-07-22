@@ -7,7 +7,7 @@ const eventBus = new EventBus();
 // Example: Setting up modal event listeners
 export function setupModalEventListeners(): void {
   // Listening for modal:open events
-  const openListenerId = eventBus.on('modal:open', (data) => {
+  const openListenerId = eventBus.on("modal:open", (data) => {
     console.log(`Modal opening: ${data.modalId}`);
     // Calling business logic handler
     modalHandler.openModal(data.modalId);

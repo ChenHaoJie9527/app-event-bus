@@ -35,4 +35,4 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./docs/dist
-        cname: eventbus.dev  # 可选：自定义域名 
+        # cname: eventbus.dev  # 暂时注释掉，等 DNS 配置正确后再启用 
