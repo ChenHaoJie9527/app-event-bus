@@ -1,4 +1,4 @@
-import type { AppEvents, EventMap } from './types';
+import type { EventRegistration, EventRegistrationTuple, InferEventMap } from './types';
 
 // Listener interface
 interface Listener<T = unknown> {
@@ -6,13 +6,84 @@ interface Listener<T = unknown> {
   callback: (data: T) => void | Promise<void>;
 }
 
-class EventBus implements AppEvents {
+class EventBus<T extends EventRegistrationTuple = never> {
   private listeners = new Map<string, Listener[]>();
+  private registeredEvents = new Set<string>();
 
-  async emit<T extends keyof EventMap>(
-    event: T,
-    data: EventMap[T]
+  /**
+   * Constructor with optional default events
+   * @param defaultEvents - Optional default event registrations
+   */
+  constructor(defaultEvents?: T) {
+    if (defaultEvents) {
+      this.registerEvents(defaultEvents);
+    }
+  }
+
+  /**
+   * Register events and listeners
+   * This method can be called multiple times to add more events
+   */
+  registerEvents<U extends EventRegistrationTuple>(
+    registrations: U
+  ): string[] {
+    const listenerIds: string[] = [];
+
+    for (const registration of registrations) {
+      const { event, listener, description } = registration;
+      const eventKey = event as string;
+
+      // Mark the event as registered
+      this.registeredEvents.add(eventKey);
+
+      // Register the listener
+      const listenerId = this.on(event, listener);
+      listenerIds.push(listenerId);
+
+      // Optional: record registration information
+      if (description) {
+        console.log(`Registered event: ${eventKey} - ${description}`);
+      }
+    }
+
+    return listenerIds;
+  }
+
+  /**
+   * Check if the event is registered
+   */
+  isEventRegistered(event: string): boolean {
+    return this.registeredEvents.has(event);
+  }
+
+  /**
+   * Get all registered events
+   */
+  getRegisteredEvents(): string[] {
+    return Array.from(this.registeredEvents);
+  }
+
+  /**
+   * Validate if the event is registered (used in emit)
+   */
+  private validateEventRegistration(event: string): void {
+    if (!this.isEventRegistered(event)) {
+      throw new Error(
+        `Event "${event}" is not registered. Please call registerEvents() first.`
+      );
+    }
+  }
+
+  /**
+   * Emit an event with type safety for registered events
+   */
+  async emit<E extends keyof InferEventMap<T>>(
+    event: E,
+    data: InferEventMap<T>[E]
   ): Promise<void> {
+    // Validate if the event is registered
+    this.validateEventRegistration(event as string);
+
     const eventListeners = this.listeners.get(event as string);
     if (eventListeners && eventListeners.length > 0) {
       const promises = eventListeners.map(({ callback }) => {
@@ -28,9 +99,12 @@ class EventBus implements AppEvents {
     }
   }
 
-  on<T extends keyof EventMap>(
-    event: T,
-    listener: (data: EventMap[T]) => void | Promise<void>
+  /**
+   * Add a listener for an event with type safety for registered events
+   */
+  on<E extends keyof InferEventMap<T>>(
+    event: E,
+    listener: (data: InferEventMap<T>[E]) => void | Promise<void>
   ): string {
     const eventKey = event as string;
     if (!this.listeners.has(eventKey)) {
@@ -49,7 +123,7 @@ class EventBus implements AppEvents {
     return listenerId;
   }
 
-  off<T extends keyof EventMap>(eventName: T, listenerId: string): boolean {
+  off(eventName: string, listenerId: string): boolean {
     const eventKey = eventName as string;
     const eventListeners = this.listeners.get(eventKey);
 
@@ -71,23 +145,53 @@ class EventBus implements AppEvents {
     return false;
   }
 
-  getListenerCount<T extends keyof EventMap>(event: T): number {
-    const eventListeners = this.listeners.get(event as string);
+  getListenerCount(event: string): number {
+    const eventListeners = this.listeners.get(event);
     return eventListeners ? eventListeners.length : 0;
   }
 
-  hasListeners<T extends keyof EventMap>(event: T): boolean {
+  hasListeners(event: string): boolean {
     return this.getListenerCount(event) > 0;
   }
 
   clear(): void {
     this.listeners.clear();
+    this.registeredEvents.clear();
   }
 
-  clearEvent<T extends keyof EventMap>(event: T): boolean {
+  clearEvent(event: string): boolean {
     const eventKey = event as string;
+    this.registeredEvents.delete(eventKey);
     return this.listeners.delete(eventKey);
   }
 }
 
+export function createEventBus<T extends EventRegistrationTuple>(
+  defaultEvents?: T
+): EventBus<T> {
+  return new EventBus(defaultEvents);
+}
+
+export type TypedEventBus<T extends EventRegistrationTuple> = {
+  emit<E extends keyof InferEventMap<T>>(
+    event: E,
+    data: InferEventMap<T>[E]
+  ): Promise<void>;
+  on<E extends keyof InferEventMap<T>>(
+    event: E,
+    listener: (data: InferEventMap<T>[E]) => void | Promise<void>
+  ): string;
+  registerEvents<U extends EventRegistrationTuple>(
+    registrations: U
+  ): string[];
+  off(eventName: string, listenerId: string): boolean;
+  isEventRegistered(event: string): boolean;
+  getRegisteredEvents(): string[];
+  getListenerCount(event: string): number;
+  hasListeners(event: string): boolean;
+  clear(): void;
+  clearEvent(event: string): boolean;
+};
+
 export { EventBus };
+export type { EventRegistration };
