@@ -8,9 +8,6 @@ export default defineConfig({
     port: 3000,
     open: true,
   },
-  // optimizeDeps: {
-  //   include: ['prismjs'],
-  // },
   build: {
     outDir: 'dist',
   },
