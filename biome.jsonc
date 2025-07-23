@@ -1,30 +1,6 @@
 {
   "$schema": "https://biomejs.dev/schemas/2.1.2/schema.json",
   "extends": ["ultracite"],
-  "vcs": {
-    "enabled": false,
-    "clientKind": "git",
-    "useIgnoreFile": false
-  },
-  "files": {
-    "includes": [
-      "src/api/**/*",
-      "src/components/**/*",
-      "src/constants/**/*",
-      "src/features/**/*",
-      "src/hooks/**/*",
-      "src/pages/**/*",
-      "src/renderer/**/*",
-      "src/router/**/*",
-      "src/store/**/*",
-      "src/utils/**/*",
-      "src/workers/**/*"
-    ]
-  },
-  "formatter": {
-    "indentStyle": "tab",
-    "lineWidth": 120
-  },
   "linter": {
     "enabled": true,
     "rules": {
@@ -37,21 +13,20 @@
         "noStaticElementInteractions": "off"
       },
       "style": {
-        "useImportType": "off"
+        "useImportType": "off",
+        "noExportedImports": "off"
       },
       "correctness": {
         "useJsxKeyInIterable": "warn",
-        "useExhaustiveDependencies": "off"
+        "useExhaustiveDependencies": "off",
+        "noUnusedVariables": "warn"
       },
       "suspicious": {
         "noImplicitAnyLet": "warn",
-        "noArrayIndexKey": "warn"
+        "noArrayIndexKey": "warn",
+        "noConsole": "off",
+        "noExplicitAny": "warn"
       }
-    }
-  },
-  "javascript": {
-    "formatter": {
-      "quoteStyle": "double"
     }
   },
   "assist": {
