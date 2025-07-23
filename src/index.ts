@@ -1,2 +1,10 @@
-export { EventBus } from './events';
-export type { AppEvents, BaseEventMap, EventMap } from './types';
+export { EventBus, createEventBus } from './events';
+export type { EventRegistration, EventRegistrationTuple } from './types';
+export type {
+  InferEventMap,
+  InferEventNames,
+  TypedEventName,
+  StrictEventBus,
+} from './types';
+
+export { EventRegistrationSchema, createEventDataSchema } from './types';
