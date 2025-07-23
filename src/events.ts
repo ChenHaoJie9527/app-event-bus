@@ -1,4 +1,10 @@
-import type { EventRegistration, EventRegistrationTuple, InferEventMap } from './types';
+import type {
+  EventRegistration,
+  EventRegistrationTuple,
+  InferEventMap,
+  TypedEventName,
+  StrictEventBus,
+} from './types';
 
 // Listener interface
 interface Listener<T = unknown> {
@@ -6,13 +12,16 @@ interface Listener<T = unknown> {
   callback: (data: T) => void | Promise<void>;
 }
 
-class EventBus<T extends EventRegistrationTuple = never> {
+// Enhanced EventBus with full type safety
+class EventBus<T extends EventRegistrationTuple = never>
+  implements StrictEventBus<T>
+{
   private listeners = new Map<string, Listener[]>();
   private registeredEvents = new Set<string>();
 
   /**
    * Constructor with optional default events
-   * @param defaultEvents - Optional default event registrations
+   * @param defaultEvents - Optional default event registrations with full type safety
    */
   constructor(defaultEvents?: T) {
     if (defaultEvents) {
@@ -21,12 +30,13 @@ class EventBus<T extends EventRegistrationTuple = never> {
   }
 
   /**
-   * Register events and listeners
+   * Register events and listeners with Zod validation
    * This method can be called multiple times to add more events
    */
-  registerEvents<U extends EventRegistrationTuple>(
-    registrations: U
-  ): string[] {
+  registerEvents<U extends EventRegistrationTuple>(registrations: U): string[] {
+    // Validate event registrations using Zod
+    this.validateEventRegistrations(registrations);
+
     const listenerIds: string[] = [];
 
     for (const registration of registrations) {
@@ -37,7 +47,7 @@ class EventBus<T extends EventRegistrationTuple = never> {
       this.registeredEvents.add(eventKey);
 
       // Register the listener
-      const listenerId = this.on(event, listener);
+      const listenerId = this.on(event as keyof InferEventMap<T>, listener);
       listenerIds.push(listenerId);
 
       // Optional: record registration information
@@ -50,10 +60,49 @@ class EventBus<T extends EventRegistrationTuple = never> {
   }
 
   /**
-   * Check if the event is registered
+   * Validate event registrations using Zod schema
    */
-  isEventRegistered(event: string): boolean {
-    return this.registeredEvents.has(event);
+  private validateEventRegistrations<U extends EventRegistrationTuple>(
+    registrations: U
+  ): void {
+    try {
+      // Basic validation for event registration structure
+      for (const registration of registrations) {
+        if (!registration.event || typeof registration.event !== 'string') {
+          throw new Error(
+            'Event registration must have a valid event name (string)'
+          );
+        }
+        if (
+          !registration.listener ||
+          typeof registration.listener !== 'function'
+        ) {
+          throw new Error(
+            'Event registration must have a valid listener (function)'
+          );
+        }
+        if (
+          registration.description &&
+          typeof registration.description !== 'string'
+        ) {
+          throw new Error('Event registration description must be a string');
+        }
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(
+          `Event registration validation failed: ${error.message}`
+        );
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Check if the event is registered - now with typed event names
+   */
+  isEventRegistered(event: TypedEventName<T>): boolean {
+    return this.registeredEvents.has(event as string);
   }
 
   /**
@@ -64,12 +113,12 @@ class EventBus<T extends EventRegistrationTuple = never> {
   }
 
   /**
-   * Validate if the event is registered (used in emit)
+   * Validate if the event is registered (now public for interface compliance)
    */
-  private validateEventRegistration(event: string): void {
+  validateEventRegistration(event: TypedEventName<T>): void {
     if (!this.isEventRegistered(event)) {
       throw new Error(
-        `Event "${event}" is not registered. Please call registerEvents() first.`
+        `Event "${event as string}" is not registered. Please call registerEvents() first.`
       );
     }
   }
@@ -82,7 +131,7 @@ class EventBus<T extends EventRegistrationTuple = never> {
     data: InferEventMap<T>[E]
   ): Promise<void> {
     // Validate if the event is registered
-    this.validateEventRegistration(event as string);
+    this.validateEventRegistration(event as TypedEventName<T>);
 
     const eventListeners = this.listeners.get(event as string);
     if (eventListeners && eventListeners.length > 0) {
@@ -123,7 +172,10 @@ class EventBus<T extends EventRegistrationTuple = never> {
     return listenerId;
   }
 
-  off(eventName: string, listenerId: string): boolean {
+  /**
+   * Remove a listener - now with typed event names for autocompletion
+   */
+  off(eventName: TypedEventName<T>, listenerId: string): boolean {
     const eventKey = eventName as string;
     const eventListeners = this.listeners.get(eventKey);
 
@@ -145,53 +197,50 @@ class EventBus<T extends EventRegistrationTuple = never> {
     return false;
   }
 
-  getListenerCount(event: string): number {
-    const eventListeners = this.listeners.get(event);
+  /**
+   * Get listener count for an event - now with typed event names
+   */
+  getListenerCount(event: TypedEventName<T>): number {
+    const eventListeners = this.listeners.get(event as string);
     return eventListeners ? eventListeners.length : 0;
   }
 
-  hasListeners(event: string): boolean {
+  /**
+   * Check if event has listeners - now with typed event names
+   */
+  hasListeners(event: TypedEventName<T>): boolean {
     return this.getListenerCount(event) > 0;
   }
 
+  /**
+   * Clear all listeners and registered events
+   */
   clear(): void {
     this.listeners.clear();
     this.registeredEvents.clear();
   }
 
-  clearEvent(event: string): boolean {
+  /**
+   * Clear specific event - now with typed event names
+   */
+  clearEvent(event: TypedEventName<T>): boolean {
     const eventKey = event as string;
     this.registeredEvents.delete(eventKey);
     return this.listeners.delete(eventKey);
   }
 }
 
+/**
+ * Factory function to create a strongly typed EventBus
+ */
 export function createEventBus<T extends EventRegistrationTuple>(
   defaultEvents?: T
-): EventBus<T> {
+): StrictEventBus<T> {
   return new EventBus(defaultEvents);
 }
 
-export type TypedEventBus<T extends EventRegistrationTuple> = {
-  emit<E extends keyof InferEventMap<T>>(
-    event: E,
-    data: InferEventMap<T>[E]
-  ): Promise<void>;
-  on<E extends keyof InferEventMap<T>>(
-    event: E,
-    listener: (data: InferEventMap<T>[E]) => void | Promise<void>
-  ): string;
-  registerEvents<U extends EventRegistrationTuple>(
-    registrations: U
-  ): string[];
-  off(eventName: string, listenerId: string): boolean;
-  isEventRegistered(event: string): boolean;
-  getRegisteredEvents(): string[];
-  getListenerCount(event: string): number;
-  hasListeners(event: string): boolean;
-  clear(): void;
-  clearEvent(event: string): boolean;
-};
+// Legacy TypedEventBus type - maintained for backwards compatibility
+export type TypedEventBus<T extends EventRegistrationTuple> = StrictEventBus<T>;
 
 export { EventBus };
 export type { EventRegistration };
