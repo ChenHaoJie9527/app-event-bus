@@ -96,3 +96,27 @@ export type StrictEventBus<T extends EventRegistrationTuple> = {
   clear(): void;
   clearEvent(event: TypedEventName<T>): boolean;
 };
+
+export type DOMEventData = {
+  'dom:action': {
+    action: string;
+    element: HTMLElement;
+    data: Record<string, unknown>;
+    originalEvent: Event;
+  };
+  'dom:action:error': {
+    error: Error;
+    target: HTMLElement;
+    originalEvent: Event;
+  };
+  'form:change': {
+    element: HTMLElement;
+    value: string;
+    originalEvent: Event;
+  };
+  'seller-report:change': {
+    element: HTMLElement;
+    value: string;
+    originalEvent: Event;
+  };
+};
