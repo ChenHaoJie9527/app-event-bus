@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventBus & DOM Integration 演示</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #555;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+            margin-top: 30px;
+        }
+
+        .demo-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background-color: #fafafa;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            min-width: 120px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-warning {
+            background-color: #ffc107;
+            color: #212529;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        button:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .counter {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #e3f2fd;
+            border-radius: 8px;
+            color: #1565c0;
+        }
+
+        .log {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            border-radius: 6px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            margin-top: 20px;
+        }
+
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 3px 0;
+        }
+
+        .log-info {
+            color: #007bff;
+        }
+
+        .log-success {
+            color: #28a745;
+        }
+
+        .log-warning {
+            color: #ffc107;
+        }
+
+        .log-error {
+            color: #dc3545;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 6px;
+            color: white;
+            font-weight: bold;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            background-color: #28a745;
+        }
+
+        .toast.warning {
+            background-color: #ffc107;
+            color: #212529;
+        }
+
+        .toast.error {
+            background-color: #dc3545;
+        }
+
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .feature-card {
+            padding: 15px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            background-color: white;
+        }
+
+        .feature-card h4 {
+            margin-top: 0;
+            color: #007bff;
+        }
+
+        code {
+            background-color: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            color: #e83e8c;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🚀 EventBus & DOM Integration demo</h1>
+
+        <div class="demo-section">
+            <h2>📊 counter demo</h2>
+            <p>demonstrate the unified handling of programmatic events and DOM events:</p>
+
+            <div class="counter" id="counter">counter: 0</div>
+
+            <div class="button-group">
+                <button class="btn-primary" onclick="incrementCounter(1)">+1 (programmatic)</button>
+                <button class="btn-danger" onclick="decrementCounter(1)">-1 (programmatic)</button>
+                <button class="btn-success" data-action="increment" data-amount="5">+5 (DOM)</button>
+                <button class="btn-warning" data-action="decrement" data-amount="5">-5 (DOM)</button>
+                <button class="btn-secondary" data-action="reset" data-amount="0">reset (DOM)</button>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h2>📝 user form demo</h2>
+            <p>demonstrate form processing and data validation:</p>
+
+            <div class="form-group">
+                <label for="username">username:</label>
+                <input type="text" id="username" placeholder="please enter username">
+            </div>
+
+            <div class="form-group">
+                <label for="email">email:</label>
+                <input type="email" id="email" placeholder="please enter email">
+            </div>
+
+            <div class="form-group">
+                <label for="role">role:</label>
+                <select id="role">
+                    <option value="user">user</option>
+                    <option value="admin">admin</option>
+                    <option value="moderator">moderator</option>
+                </select>
+            </div>
+
+            <div class="button-group">
+                <button class="btn-primary" onclick="submitForm()">submit (programmatic)</button>
+                <button class="btn-success" data-action="submit-form" data-form-id="user-form">submit (DOM)</button>
+                <button class="btn-secondary" data-action="clear-form">clear form</button>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h2>🔔 notification demo</h2>
+            <p>demonstrate different types of notification messages:</p>
+
+            <div class="button-group">
+                <button class="btn-success" data-action="show-notification" data-message="operation success!"
+                    data-type="success">
+                    success notification
+                </button>
+                <button class="btn-warning" data-action="show-notification" data-message="please check the input"
+                    data-type="warning">
+                    warning notification
+                </button>
+                <button class="btn-danger" data-action="show-notification"
+                    data-message="operation failed, please try again" data-type="error">
+                    error notification
+                </button>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h2>🎯 system features</h2>
+            <div class="feature-list">
+                <div class="feature-card">
+                    <h4>🔧 type safety</h4>
+                    <p>complete TypeScript type inference and validation</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🌐 DOM integration</h4>
+                    <p>use <code>data-action</code> attribute to automatically handle DOM events</p>
+                </div>
+                <div class="feature-card">
+                    <h4>⚡ high performance</h4>
+                    <p>event delegation and debounce optimization</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🧹 resource management</h4>
+                    <p>automatic cleanup and memory leak protection</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h2>📋 event log</h2>
+            <p>display all event activities in real time:</p>
+            <button class="btn-secondary" onclick="clearLog()">clear log</button>
+            <div class="log" id="eventLog">
+                <div class="log-entry log-info">waiting for events...</div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { EventBus } from '../src/index.js';
+
+        let counterValue = 0;
+
+        const appEvents = [
+            {
+                event: 'counter:increment',
+                listener: (data) => {
+                    updateCounter(parseInt(data.amount) || 1);
+                    showToast(`counter increased ${data.amount}`, 'success');
+                },
+                description: 'counter increased event'
+            },
+            {
+                event: 'counter:decrement',
+                listener: (data) => {
+                    updateCounter(-(parseInt(data.amount) || 1));
+                    showToast(`counter decreased ${data.amount}`, 'warning');
+                },
+                description: 'counter decreased event'
+            },
+            {
+                event: 'counter:reset',
+                listener: () => {
+                    resetCounter();
+                    showToast('counter reset', 'success');
+                },
+                description: 'counter reset event'
+            },
+            {
+                event: 'form:submit',
+                listener: (data) => {
+                    showToast('form submitted successfully', 'success');
+                    eventBus.log(`form data: ${JSON.stringify(data)}`, 'info');
+                },
+                description: 'form submitted event'
+            },
+            {
+                event: 'form:clear',
+                listener: () => {
+                    clearForm();
+                    showToast('form cleared', 'warning');
+                },
+                description: 'form cleared event'
+            },
+            {
+                event: 'notification:show',
+                listener: (data) => {
+                    showToast(data.message, data.type);
+                },
+                description: 'show notification event'
+            },
+            {
+                event: 'dom:action',
+                listener: (data) => {
+                    handleDOMAction(data);
+                },
+                description: 'DOM action event'
+            },
+            {
+                event: 'dom:action:error',
+                listener: (data) => {
+                    log(`DOM action error: ${data.error.message}`, 'error');
+                    showToast('operation failed, please try again', 'error');
+                },
+                description: 'DOM action error event'
+            }
+        ];
+
+        const eventBus = new EventBus(appEvents);
+
+        log('EventBus initialized, DOM integration automatically enabled', 'success');
+
+        function handleDOMAction(data) {
+            const { action, data: actionData } = data;
+            log(`handle DOM action: ${action}`, 'info');
+
+            switch (action) {
+                case 'increment':
+                    eventBus.emit('counter:increment', { amount: actionData.amount });
+                    break;
+                case 'decrement':
+                    eventBus.emit('counter:decrement', { amount: actionData.amount });
+                    break;
+                case 'reset':
+                    eventBus.emit('counter:reset');
+                    break;
+                case 'submit-form':
+                    eventBus.emit('form:submit', getFormData());
+                    break;
+                case 'clear-form':
+                    eventBus.emit('form:clear');
+                    break;
+                case 'show-notification':
+                    eventBus.emit('notification:show', {
+                        message: actionData.message,
+                        type: actionData.type
+                    });
+                    break;
+                default:
+                    log(`unknown DOM action: ${action}`, 'warning');
+                    break;
+            }
+        }
+
+        function updateCounter(delta) {
+            counterValue += delta;
+            document.getElementById('counter').textContent = `counter: ${counterValue}`;
+            log(`counter updated: ${delta > 0 ? '+' : ''}${delta} (current value: ${counterValue})`, 'info');
+        }
+
+        function resetCounter() {
+            counterValue = 0;
+            document.getElementById('counter').textContent = `counter: ${counterValue}`;
+            log('counter reset to 0', 'info');
+        }
+
+        function getFormData() {
+            const data = {
+                username: document.getElementById('username').value,
+                email: document.getElementById('email').value,
+                role: document.getElementById('role').value
+            };
+            log(`get form data: ${JSON.stringify(data)}`, 'info');
+            return data;
+        }
+
+        function clearForm() {
+            document.getElementById('username').value = '';
+            document.getElementById('email').value = '';
+            document.getElementById('role').value = 'user';
+            log('form cleared', 'info');
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => toast.classList.add('show'), 100);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => document.body.removeChild(toast), 300);
+            }, 3000);
+        }
+
+        function log(message, type = 'info') {
+            const logElement = document.getElementById('eventLog');
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logElement.appendChild(entry);
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+
+        function clearLog() {
+            const logElement = document.getElementById('eventLog');
+            logElement.innerHTML = '<div class="log-entry log-info">log cleared</div>';
+        }
+
+        window.incrementCounter = (amount) => {
+            eventBus.emit('counter:increment', { amount });
+        };
+
+        window.decrementCounter = (amount) => {
+            eventBus.emit('counter:decrement', { amount });
+        };
+
+        window.submitForm = () => {
+            eventBus.emit('form:submit', getFormData());
+        };
+
+        window.clearLog = clearLog;
+
+        log('EventBus demo initialized', 'success');
+        showToast('demo system ready!', 'success');
+    </script>
+</body>
+
+</html>
