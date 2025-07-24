@@ -10,7 +10,7 @@
   },
   "scripts": {
     "build": "tsup",
-    "test:watch": "vitest",
+    "test:watch": "vitest --environment=jsdom",
     "lint": "biome check --unsafe .",
     "format": "biome format --write .",
     "format:html": "prettier --write \"docs/**/*.html\"",
@@ -40,6 +40,7 @@
   "devDependencies": {
     "@biomejs/biome": "2.1.2",
     "husky": "^9.1.7",
+    "jsdom": "^26.1.0",
     "knip": "^5.62.0",
     "prettier": "^3.6.2",
     "tsup": "^8.5.0",
