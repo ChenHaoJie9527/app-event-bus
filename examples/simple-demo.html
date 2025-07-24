@@ -337,7 +337,8 @@
                     updateCounter(parseInt(data.amount) || 1);
                     showToast(`counter increased ${data.amount}`, 'success');
                 },
-                description: 'counter increased event'
+                description: 'counter increased event',
+                debounce: 300
             },
             {
                 event: 'counter:decrement',
@@ -345,7 +346,8 @@
                     updateCounter(-(parseInt(data.amount) || 1));
                     showToast(`counter decreased ${data.amount}`, 'warning');
                 },
-                description: 'counter decreased event'
+                description: 'counter decreased event',
+                debounce: 300
             },
             {
                 event: 'counter:reset',
@@ -359,9 +361,10 @@
                 event: 'form:submit',
                 listener: (data) => {
                     showToast('form submitted successfully', 'success');
-                    eventBus.log(`form data: ${JSON.stringify(data)}`, 'info');
+                    console.log(`form data: ${JSON.stringify(data)}`, 'info');
                 },
-                description: 'form submitted event'
+                description: 'form submitted event',
+                debounce: 500
             },
             {
                 event: 'form:clear',
@@ -376,7 +379,8 @@
                 listener: (data) => {
                     showToast(data.message, data.type);
                 },
-                description: 'show notification event'
+                description: 'show notification event',
+                debounce: 200
             },
             {
                 event: 'dom:action',

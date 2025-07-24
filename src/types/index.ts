@@ -4,12 +4,14 @@ export const EventRegistrationSchema = z.object({
   event: z.string(),
   listener: z.function(),
   description: z.optional(z.string()),
+  debounce: z.optional(z.number()),
 });
 
 export interface EventRegistration<T extends string, D> {
   event: T;
   listener: (data: D) => void | Promise<void>;
   description?: string;
+  debounce?: number;
 }
 
 export type EventRegistrationTuple = readonly EventRegistration<string, any>[];

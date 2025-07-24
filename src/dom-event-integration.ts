@@ -1,6 +1,3 @@
-import { debounce } from './utils';
-import type { EventRegistrationTuple } from './types';
-
 type DomDependencies = {
   document: Document;
   eventBus: {
@@ -10,7 +7,7 @@ type DomDependencies = {
   };
 };
 
-export class DOMEventIntegration<T extends EventRegistrationTuple> {
+export class DOMEventIntegration {
   private dependencies: DomDependencies;
   private connected = false;
   private boundHandlers = new Map<string, EventListener>();
@@ -43,14 +40,15 @@ export class DOMEventIntegration<T extends EventRegistrationTuple> {
   private setupDOMEventListeners() {
     const clickHandler = this.createDelegatedHandler(
       'click',
-      (target, event) => {
+      (target: HTMLElement, event: Event) => {
         if (target.dataset.action) {
           this.handleDataAction(target, event);
         }
       }
     );
 
-    const debouncedChangeHandler = debounce(
+    const changeHandler = this.createDelegatedHandler(
+      'change',
       (target: HTMLElement, event: Event) => {
         if (target.dataset.action) {
           this.handleDataAction(target, event);
@@ -59,25 +57,21 @@ export class DOMEventIntegration<T extends EventRegistrationTuple> {
         } else if (target.closest('[data-seller-report-form]')) {
           this.handleSellerReportFormChange(target, event);
         }
-      },
-      150
+      }
     );
 
-    const changeHandler = this.createDelegatedHandler(
-      'change',
-      debouncedChangeHandler
-    );
     const keydownHandler = this.createDelegatedHandler(
       'keydown',
-      (target, event) => {
+      (target: HTMLElement, event: Event) => {
         if (target.dataset.action) {
           this.handleDataAction(target, event);
         }
       }
     );
+
     const submitHandler = this.createDelegatedHandler(
       'submit',
-      (target, event) => {
+      (target: HTMLElement, event: Event) => {
         if (target.dataset.action) {
           this.handleDataAction(target, event);
         }
@@ -114,7 +108,6 @@ export class DOMEventIntegration<T extends EventRegistrationTuple> {
 
       const actionData = this.parseDataAttributes(target);
 
-      // 现在有完整的类型提示！
       this.dependencies.eventBus.emit('dom:action', {
         action,
         element: target,

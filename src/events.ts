@@ -1,4 +1,5 @@
 import { DOMEventIntegration } from './dom-event-integration';
+import { debounce } from './utils';
 import type {
   EventRegistration,
   EventRegistrationTuple,
@@ -19,7 +20,9 @@ class EventBus<T extends EventRegistrationTuple = never>
 {
   private listeners = new Map<string, Listener[]>();
   private registeredEvents = new Set<string>();
-  private domIntegration?: DOMEventIntegration<T>;
+  private domIntegration?: DOMEventIntegration;
+  private debouncedEmits = new Map<string, (data: any) => void>();
+  private defaultDebounceConfig = new Map<string, number>();
 
   /**
    * Constructor with optional default events
@@ -54,11 +57,21 @@ class EventBus<T extends EventRegistrationTuple = never>
     const listenerIds: string[] = [];
 
     for (const registration of registrations) {
-      const { event, listener, description } = registration;
+      const {
+        event,
+        listener,
+        description,
+        debounce: debounceTime,
+      } = registration;
       const eventKey = event as string;
 
       // Mark the event as registered
       this.registeredEvents.add(eventKey);
+
+      // Set default debounce if specified
+      if (debounceTime && debounceTime > 0) {
+        this.setDefaultDebounce(eventKey, debounceTime);
+      }
 
       // Register the listener
       const listenerId = this.on(event as keyof InferEventMap<T>, listener);
@@ -86,7 +99,7 @@ class EventBus<T extends EventRegistrationTuple = never>
   /**
    * Get DOM event integration instance
    */
-  getDOMIntegration(): DOMEventIntegration<T> | undefined {
+  getDOMIntegration(): DOMEventIntegration | undefined {
     return this.domIntegration;
   }
 
@@ -185,9 +198,44 @@ class EventBus<T extends EventRegistrationTuple = never>
   }
 
   /**
-   * Emit an event with type safety for registered events
+   * Emit an event with type safety for registered events and optional debouncing
    */
   async emit<E extends keyof InferEventMap<T>>(
+    event: E,
+    data: InferEventMap<T>[E],
+    options?: { debounce?: number }
+  ): Promise<void> {
+    const eventKey = event as string;
+    const debounceDelay =
+      options?.debounce ?? this.defaultDebounceConfig.get(eventKey);
+
+    // If debounce is requested, use debounced version
+    if (debounceDelay && debounceDelay > 0) {
+      if (!this.debouncedEmits.has(eventKey)) {
+        this.debouncedEmits.set(
+          eventKey,
+          debounce(
+            (debouncedData: any) => this.emitImmediate(event, debouncedData),
+            debounceDelay
+          )
+        );
+      }
+
+      const debouncedEmit = this.debouncedEmits.get(eventKey);
+      if (debouncedEmit) {
+        debouncedEmit(data);
+        return;
+      }
+    }
+
+    // Otherwise emit immediately
+    await this.emitImmediate(event, data);
+  }
+
+  /**
+   * Internal method for immediate event emission
+   */
+  private async emitImmediate<E extends keyof InferEventMap<T>>(
     event: E,
     data: InferEventMap<T>[E]
   ): Promise<void> {
@@ -288,6 +336,15 @@ class EventBus<T extends EventRegistrationTuple = never>
     const eventKey = event as string;
     this.registeredEvents.delete(eventKey);
     return this.listeners.delete(eventKey);
+  }
+
+  /**
+   * Set default debounce delay for specific events
+   * @param event - Event name
+   * @param delay - Debounce delay in milliseconds
+   */
+  setDefaultDebounce(event: string, delay: number): void {
+    this.defaultDebounceConfig.set(event, delay);
   }
 }
 
