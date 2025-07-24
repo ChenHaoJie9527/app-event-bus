@@ -1,10 +1,9 @@
-import { z } from 'zod';
+import * as z from 'zod/mini';
 
-// Zod schema for event registration
 export const EventRegistrationSchema = z.object({
   event: z.string(),
   listener: z.function(),
-  description: z.string().optional(),
+  description: z.optional(z.string()),
 });
 
 export interface EventRegistration<T extends string, D> {
@@ -60,13 +59,13 @@ export type AppEvents<T extends EventRegistrationTuple> = DynamicEventBus<T>;
 // Zod schema for validating event data based on registration
 export function createEventDataSchema<T extends EventRegistrationTuple>(
   registrations: T
-): z.ZodSchema {
+) {
   const eventSchemas = registrations.reduce(
     (acc, registration) => {
       acc[registration.event] = z.any(); // Can be enhanced with specific schemas
       return acc;
     },
-    {} as Record<string, z.ZodSchema>
+    {} as Record<string, any>
   );
 
   return z.object(eventSchemas);
