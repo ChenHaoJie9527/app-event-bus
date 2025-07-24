@@ -5,6 +5,9 @@
     "enabled": true,
     "rules": {
       "recommended": true,
+      "performance": {
+        "noNamespaceImport": "off"
+      },
       "a11y": {
         "useAltText": "off",
         "useValidAriaRole": "off",
