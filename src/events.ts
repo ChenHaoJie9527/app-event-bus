@@ -1,3 +1,4 @@
+import { DOMEventIntegration } from './dom-event-integration';
 import type {
   EventRegistration,
   EventRegistrationTuple,
@@ -18,6 +19,7 @@ class EventBus<T extends EventRegistrationTuple = never>
 {
   private listeners = new Map<string, Listener[]>();
   private registeredEvents = new Set<string>();
+  private domIntegration?: DOMEventIntegration<T>;
 
   /**
    * Constructor with optional default events
@@ -26,6 +28,18 @@ class EventBus<T extends EventRegistrationTuple = never>
   constructor(defaultEvents?: T) {
     if (defaultEvents) {
       this.registerEvents(defaultEvents);
+    }
+
+    this.autoEnableDOMIntegration();
+  }
+
+  private autoEnableDOMIntegration(): void {
+    if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+      this.domIntegration = new DOMEventIntegration({
+        document: window.document,
+        eventBus: this,
+      });
+      this.domIntegration.connect();
     }
   }
 
@@ -57,6 +71,53 @@ class EventBus<T extends EventRegistrationTuple = never>
     }
 
     return listenerIds;
+  }
+
+  /**
+   * Disable DOM event integration
+   */
+  disableDOMIntegration(): void {
+    if (this.domIntegration) {
+      this.domIntegration.disconnect();
+      this.domIntegration = undefined;
+    }
+  }
+
+  /**
+   * Get DOM event integration instance
+   */
+  getDOMIntegration(): DOMEventIntegration<T> | undefined {
+    return this.domIntegration;
+  }
+
+  /**
+   * Check if DOM integration is enabled
+   */
+  isDOMIntegrationEnabled(): boolean {
+    return this.domIntegration?.isConnected() ?? false;
+  }
+
+  /**
+   * Get all registered DOM-related events
+   */
+  getDOMEvents(): string[] {
+    return this.getRegisteredEvents().filter(
+      (eventName) =>
+        eventName.startsWith('dom:') ||
+        eventName.startsWith('form:') ||
+        eventName.includes('action')
+    );
+  }
+
+  /**
+   * Check if the event is a DOM event
+   */
+  isDOMEvent(eventName: string): boolean {
+    return (
+      eventName.startsWith('dom:') ||
+      eventName.startsWith('form:') ||
+      eventName.includes('action')
+    );
   }
 
   /**
