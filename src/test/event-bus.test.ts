@@ -16,14 +16,14 @@ describe('EventBus Integration Tests', () => {
         {
           event: 'modal:open',
           listener: vi.fn(),
-          description: 'Test modal open handler'
+          description: 'Test modal open handler',
         },
         {
           event: 'modal:close',
           listener: vi.fn(),
-          description: 'Test modal close handler'
-        }
-      ] as const
+          description: 'Test modal close handler',
+        },
+      ] as const;
       const listenerIds = eventBus.registerEvents(events);
 
       expect(listenerIds).toHaveLength(2);
@@ -37,9 +37,9 @@ describe('EventBus Integration Tests', () => {
         {
           event: 'modal:open',
           listener: vi.fn(),
-          description: 'Test handler'
-        }
-      ] as const
+          description: 'Test handler',
+        },
+      ] as const;
       eventBus.registerEvents(events);
 
       expect(eventBus.isEventRegistered('modal:open')).toBe(true);
@@ -56,9 +56,9 @@ describe('EventBus Integration Tests', () => {
         {
           event: 'modal:open',
           listener: vi.fn(),
-          description: 'Test handler'
-        }
-      ] as const
+          description: 'Test handler',
+        },
+      ] as const;
       eventBus.registerEvents(events);
 
       await expect(
@@ -74,14 +74,14 @@ describe('EventBus Integration Tests', () => {
         {
           event: 'modal:open',
           listener: listener1,
-          description: 'First handler'
+          description: 'First handler',
         },
         {
           event: 'modal:open',
           listener: listener2,
-          description: 'Second handler'
-        }
-      ] as const
+          description: 'Second handler',
+        },
+      ] as const;
       const listenerIds = eventBus.registerEvents(events);
 
       expect(listenerIds).toHaveLength(2);
@@ -93,9 +93,9 @@ describe('EventBus Integration Tests', () => {
         {
           event: 'modal:open',
           listener: vi.fn(),
-          description: 'Test handler'
-        }
-      ] as const
+          description: 'Test handler',
+        },
+      ] as const;
       eventBus.registerEvents(events);
 
       expect(eventBus.isEventRegistered('modal:open')).toBe(true);
@@ -111,14 +111,14 @@ describe('EventBus Integration Tests', () => {
         {
           event: 'modal:open',
           listener: vi.fn(),
-          description: 'Test handler'
+          description: 'Test handler',
         },
         {
           event: 'modal:close',
           listener: vi.fn(),
-          description: 'Test handler'
-        }
-      ] as const
+          description: 'Test handler',
+        },
+      ] as const;
       eventBus.registerEvents(events);
 
       expect(eventBus.isEventRegistered('modal:open')).toBe(true);
@@ -148,8 +148,8 @@ describe('EventBus Integration Tests', () => {
         {
           event: 'modal:open',
           listener: mockListener,
-          description: 'Test handler'
-        }
+          description: 'Test handler',
+        },
       ] as const);
 
       await eventBus.emit('modal:open', testData);
@@ -167,13 +167,13 @@ describe('EventBus Integration Tests', () => {
         {
           event: 'modal:open',
           listener: openListener,
-          description: 'Open handler'
+          description: 'Open handler',
         },
         {
           event: 'modal:close',
           listener: closeListener,
-          description: 'Close handler'
-        }
+          description: 'Close handler',
+        },
       ] as const);
 
       await eventBus.emit('modal:open', testData);
@@ -196,13 +196,13 @@ describe('EventBus Integration Tests', () => {
         {
           event: 'modal:open',
           listener: errorListener,
-          description: 'Error handler'
+          description: 'Error handler',
         },
         {
           event: 'modal:open',
           listener: normalListener,
-          description: 'Normal handler'
-        }
+          description: 'Normal handler',
+        },
       ] as const);
 
       await expect(eventBus.emit('modal:open', testData)).rejects.toThrow(
@@ -231,18 +231,18 @@ describe('EventBus Integration Tests', () => {
         {
           event: 'modal:open',
           listener: listener1,
-          description: 'First handler'
+          description: 'First handler',
         },
         {
           event: 'modal:open',
           listener: listener2,
-          description: 'Second handler'
+          description: 'Second handler',
         },
         {
           event: 'modal:open',
           listener: listener3,
-          description: 'Third handler'
-        }
+          description: 'Third handler',
+        },
       ] as const);
 
       await eventBus.emit('modal:open', { modalId: 'test' });
@@ -263,8 +263,8 @@ describe('EventBus Integration Tests', () => {
         {
           event: 'modal:open',
           listener: mockListener,
-          description: 'Test handler'
-        }
+          description: 'Test handler',
+        },
       ] as const);
 
       await eventBus.emit('modal:open', testData);
@@ -283,8 +283,8 @@ describe('EventBus Integration Tests', () => {
         {
           event: 'modal:open',
           listener: mockListener,
-          description: 'Test handler'
-        }
+          description: 'Test handler',
+        },
       ] as const);
 
       await eventBus.emit('modal:open', data1);
@@ -304,8 +304,8 @@ describe('EventBus Integration Tests', () => {
         {
           event: 'modal:open',
           listener: mockListener,
-          description: 'Test handler'
-        }
+          description: 'Test handler',
+        },
       ] as const);
 
       const removed = eventBus.off('modal:open', listenerIds[0]);
@@ -331,13 +331,13 @@ describe('EventBus Integration Tests', () => {
         {
           event: 'modal:open',
           listener: mockListener1,
-          description: 'First handler'
+          description: 'First handler',
         },
         {
           event: 'modal:open',
           listener: mockListener2,
-          description: 'Second handler'
-        }
+          description: 'Second handler',
+        },
       ] as const);
 
       expect(listenerIds).toHaveLength(2);
@@ -356,8 +356,8 @@ describe('EventBus Integration Tests', () => {
         {
           event: 'modal:open',
           listener: vi.fn(),
-          description: 'First handler'
-        }
+          description: 'First handler',
+        },
       ] as const);
 
       expect(eventBus.getListenerCount('modal:open')).toBe(1);
@@ -367,8 +367,8 @@ describe('EventBus Integration Tests', () => {
         {
           event: 'modal:open',
           listener: vi.fn(),
-          description: 'Second handler'
-        }
+          description: 'Second handler',
+        },
       ] as const);
 
       expect(eventBus.getListenerCount('modal:open')).toBe(2);
@@ -386,13 +386,13 @@ describe('EventBus Integration Tests', () => {
         {
           event: 'modal:open',
           listener: vi.fn(),
-          description: 'Test handler'
+          description: 'Test handler',
         },
         {
           event: 'modal:close',
           listener: vi.fn(),
-          description: 'Test handler'
-        }
+          description: 'Test handler',
+        },
       ] as const);
 
       expect(eventBus.hasListeners('modal:open')).toBe(true);
@@ -409,13 +409,13 @@ describe('EventBus Integration Tests', () => {
         {
           event: 'modal:open',
           listener: vi.fn(),
-          description: 'Test handler'
+          description: 'Test handler',
         },
         {
           event: 'modal:close',
           listener: vi.fn(),
-          description: 'Test handler'
-        }
+          description: 'Test handler',
+        },
       ] as const);
 
       expect(eventBus.hasListeners('modal:open')).toBe(true);
@@ -442,8 +442,8 @@ describe('EventBus Integration Tests', () => {
         {
           event: 'modal:open',
           listener: mockListener,
-          description: 'Test handler'
-        }
+          description: 'Test handler',
+        },
       ] as const);
 
       // Firing multiple events concurrently
@@ -465,13 +465,13 @@ describe('EventBus Integration Tests', () => {
         {
           event: 'modal:open',
           listener: openListener,
-          description: 'Open handler'
+          description: 'Open handler',
         },
         {
           event: 'modal:close',
           listener: closeListener,
-          description: 'Close handler'
-        }
+          description: 'Close handler',
+        },
       ] as const);
 
       // Firing different types of events concurrently
@@ -497,13 +497,13 @@ describe('EventBus Integration Tests', () => {
       {
         event: 'modal:open',
         listener: errorListener,
-        description: 'Error handler'
+        description: 'Error handler',
       },
       {
         event: 'modal:close',
         listener: normalListener,
-        description: 'Normal handler'
-      }
+        description: 'Normal handler',
+      },
     ] as const);
 
     try {
@@ -529,7 +529,7 @@ describe('EventBus Integration Tests', () => {
       const registrations = listeners.map((listener, index) => ({
         event: 'modal:open' as const,
         listener,
-        description: `Handler ${index + 1}`
+        description: `Handler ${index + 1}`,
       }));
 
       eventBus.registerEvents(registrations);
@@ -569,73 +569,80 @@ describe('EventBus Integration Tests', () => {
 
   describe('Type Inference System', () => {
     it('should correctly infer event types from registration', () => {
-      // 定义具有不同数据类型的注册项
+      // Defining registrations with different data types
       const registrations = [
         {
           event: 'user:login',
           listener: (data: { userId: string; username: string }) => {
             console.log('User logged in:', data.username);
           },
-          description: 'User login handler'
+          description: 'User login handler',
         },
         {
           event: 'order:created',
-          listener: (data: { orderId: string; amount: number; items: string[] }) => {
+          listener: (data: {
+            orderId: string;
+            amount: number;
+            items: string[];
+          }) => {
             console.log('Order created:', data.orderId, data.amount);
           },
-          description: 'Order creation handler'
+          description: 'Order creation handler',
         },
         {
           event: 'notification:show',
-          listener: (data: { message: string; type: 'success' | 'error' | 'warning' }) => {
+          listener: (data: {
+            message: string;
+            type: 'success' | 'error' | 'warning';
+          }) => {
             console.log('Notification:', data.message, data.type);
           },
-          description: 'Notification handler'
-        }
-      ] as const
+          description: 'Notification handler',
+        },
+      ] as const;
 
-      // 创建新的 EventBus 实例，使用推导的类型
+      // Creating a new EventBus instance with inferred types
       const typedEventBus = new EventBus(registrations);
 
-      // 测试类型推导是否正确
-      // 这些调用应该在编译时通过类型检查
-      typedEventBus.emit('order:created', { 
-        orderId: 'ORD-001', 
-        amount: 299.99, 
-        items: ['item1', 'item2'] 
+      // Testing if type inference is correct
+      // These calls should pass type checking at compile time
+      typedEventBus.emit('order:created', {
+        orderId: 'ORD-001',
+        amount: 299.99,
+        items: ['item1', 'item2'],
       });
 
-      typedEventBus.emit('notification:show', { 
-        message: '操作成功', 
-        type: 'success' 
+      typedEventBus.emit('notification:show', {
+        message: 'success',
+        type: 'success',
       });
 
-      // 验证事件已正确注册
+      // Verifying that events are correctly registered
       expect(typedEventBus.isEventRegistered('user:login')).toBe(true);
       expect(typedEventBus.isEventRegistered('order:created')).toBe(true);
       expect(typedEventBus.isEventRegistered('notification:show')).toBe(true);
     });
 
     it('should provide correct type hints for emit method', () => {
-      // 这个测试验证类型提示是否正确
+      // This test verifies if type hints are correct
       const registrations = [
         {
           event: 'test:event',
           listener: (data: { id: string; value: number }) => {
             console.log('Test event:', data.id, data.value);
           },
-          description: 'Test event handler'
-        }
-      ] as const
+          description: 'Test event handler',
+        },
+      ] as const;
 
       const typedEventBus = new EventBus(registrations);
 
-      // 这里应该有完整的类型提示
-      // event 参数应该提示 'test:event'
-      // data 参数应该提示 { id: string; value: number }
+      // There should be complete type hints here
+      // event parameter should hint 'test:event'
+      // data parameter should hint { id: string; value: number }
       typedEventBus.emit('test:event', { id: 'test-1', value: 42 });
 
-      // 验证事件已注册
+      // Verifying that events are registered
       expect(typedEventBus.isEventRegistered('test:event')).toBe(true);
     });
 
@@ -660,27 +667,27 @@ describe('EventBus Integration Tests', () => {
           }) => {
             console.log('Product updated:', data.productId, data.changes);
           },
-          description: 'Product update handler'
-        }
+          description: 'Product update handler',
+        },
       ] as const;
 
       const typedEventBus = new EventBus(registrations);
 
-      // 测试复杂嵌套数据类型
+      // Testing complex nested data types
       typedEventBus.emit('product:updated', {
         productId: 'PROD-001',
         changes: {
-          name: '新商品名称',
+          name: 'new product name',
           price: 199.99,
           categories: [
-            { id: 'cat1', name: '电子产品' },
-            { id: 'cat2', name: '数码配件' }
-          ]
+            { id: 'cat1', name: 'electronics' },
+            { id: 'cat2', name: 'digital accessories' },
+          ],
         },
         metadata: {
           updatedBy: 'admin',
-          timestamp: new Date()
-        }
+          timestamp: new Date(),
+        },
       });
 
       expect(typedEventBus.isEventRegistered('product:updated')).toBe(true);
@@ -690,9 +697,10 @@ describe('EventBus Integration Tests', () => {
       const registrations = [
         {
           event: 'api:response',
-          listener: (data: 
-            | { status: 'success'; data: any; message?: string }
-            | { status: 'error'; error: string; code: number }
+          listener: (
+            data:
+              | { status: 'success'; data: any; message?: string }
+              | { status: 'error'; error: string; code: number }
           ) => {
             if (data.status === 'success') {
               console.log('API success:', data.data);
@@ -700,23 +708,23 @@ describe('EventBus Integration Tests', () => {
               console.log('API error:', data.error, data.code);
             }
           },
-          description: 'API response handler'
-        }
+          description: 'API response handler',
+        },
       ] as const;
 
       const typedEventBus = new EventBus(registrations);
 
-      // 测试联合类型
+      // Testing union types
       typedEventBus.emit('api:response', {
         status: 'success',
-        data: { userId: '123', name: '张三' },
-        message: '操作成功'
+        data: { userId: '123', name: 'John Doe' },
+        message: 'success',
       });
 
       typedEventBus.emit('api:response', {
         status: 'error',
-        error: '用户不存在',
-        code: 404
+        error: 'User not found',
+        code: 404,
       });
 
       expect(typedEventBus.isEventRegistered('api:response')).toBe(true);
@@ -726,24 +734,24 @@ describe('EventBus Integration Tests', () => {
       const registrations = [
         {
           event: 'data:sync',
-          listener: async (data: { 
-            userId: string; 
-            syncData: Record<string, any> 
+          listener: async (data: {
+            userId: string;
+            syncData: Record<string, any>;
           }) => {
-            // 模拟异步操作
-            await new Promise(resolve => setTimeout(resolve, 10));
+            // Simulating asynchronous operations
+            await new Promise((resolve) => setTimeout(resolve, 10));
             console.log('Data synced for user:', data.userId);
           },
-          description: 'Data sync handler'
-        }
+          description: 'Data sync handler',
+        },
       ] as const;
 
       const typedEventBus = new EventBus(registrations);
 
-      // 测试异步监听器
+      // Testing asynchronous listeners
       await typedEventBus.emit('data:sync', {
         userId: '123',
-        syncData: { preferences: { theme: 'dark' } }
+        syncData: { preferences: { theme: 'dark' } },
       });
 
       expect(typedEventBus.isEventRegistered('data:sync')).toBe(true);
@@ -756,29 +764,29 @@ describe('EventBus Integration Tests', () => {
           listener: (data: { userId: string; action: 'login' | 'logout' }) => {
             console.log('User action:', data.action);
           },
-          description: 'User action logger'
+          description: 'User action logger',
         },
         {
           event: 'user:action',
           listener: (data: { userId: string; action: 'login' | 'logout' }) => {
-            // 发送分析数据
+            // Sending analytics data
             console.log('Analytics:', data.userId, data.action);
           },
-          description: 'User action analytics'
-        }
+          description: 'User action analytics',
+        },
       ] as const;
 
       const typedEventBus = new EventBus(registrations);
 
-      // 测试同一事件的多个监听器
+      // Testing multiple listeners for the same event
       typedEventBus.emit('user:action', {
         userId: '123',
-        action: 'login'
+        action: 'login',
       });
 
       typedEventBus.emit('user:action', {
         userId: '123',
-        action: 'logout'
+        action: 'logout',
       });
 
       expect(typedEventBus.isEventRegistered('user:action')).toBe(true);
@@ -789,46 +797,68 @@ describe('EventBus Integration Tests', () => {
       const registrations = [
         {
           event: 'entity:created',
-          listener: (data: { entityType: string; entityId: string; data: any }) => {
+          listener: (data: {
+            entityType: string;
+            entityId: string;
+            data: any;
+          }) => {
             console.log('Entity created:', data.entityType, data.entityId);
           },
-          description: 'Generic entity creation handler'
+          description: 'Generic entity creation handler',
         },
         {
           event: 'entity:updated',
-          listener: (data: { entityType: string; entityId: string; changes: any }) => {
+          listener: (data: {
+            entityType: string;
+            entityId: string;
+            changes: any;
+          }) => {
             console.log('Entity updated:', data.entityType, data.entityId);
           },
-          description: 'Generic entity update handler'
+          description: 'Generic entity update handler',
         },
         {
           event: 'entity:deleted',
-          listener: (data: { entityType: string; entityId: string; reason?: string }) => {
+          listener: (data: {
+            entityType: string;
+            entityId: string;
+            reason?: string;
+          }) => {
             console.log('Entity deleted:', data.entityType, data.entityId);
           },
-          description: 'Generic entity deletion handler'
-        }
+          description: 'Generic entity deletion handler',
+        },
+        {
+          event: 'dom:action',
+          listener: (data: {
+            action: string;
+            element: HTMLElement;
+            data: Record<string, unknown>;
+          }) => {
+            console.log('DOM action:', data.action, data.element, data.data);
+          },
+          description: 'DOM action handler',
+        },
       ] as const;
 
       const typedEventBus = new EventBus(registrations);
 
-      // 测试通用事件名称
       typedEventBus.emit('entity:created', {
         entityType: 'user',
         entityId: '123',
-        data: { name: '张三', email: 'zhangsan@example.com' }
+        data: { name: 'John Doe', email: 'john.doe@example.com' },
       });
 
       typedEventBus.emit('entity:updated', {
         entityType: 'product',
         entityId: 'PROD-001',
-        changes: { price: 199.99 }
+        changes: { price: 199.99 },
       });
 
       typedEventBus.emit('entity:deleted', {
         entityType: 'order',
         entityId: 'ORD-001',
-        reason: '用户取消'
+        reason: 'User cancelled',
       });
 
       expect(typedEventBus.isEventRegistered('entity:created')).toBe(true);
