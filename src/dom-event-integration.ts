@@ -1,27 +1,21 @@
 import { debounce } from './utils';
-import type {
-  EventRegistrationTuple,
-  StrictEventBus,
-  DOMEventData,
-} from './types';
+import type { EventRegistrationTuple } from './types';
 
-// 确保 EventBus 包含这些事件类型
-type DomDependencies<T extends EventRegistrationTuple> = {
+type DomDependencies = {
   document: Document;
-  eventBus: StrictEventBus<T> & {
-    emit<K extends keyof DOMEventData>(
-      event: K,
-      data: DOMEventData[K]
-    ): Promise<void>;
+  eventBus: {
+    emit(event: string, data: any): Promise<void>;
+    on(event: string, listener: (data: any) => void | Promise<void>): string;
+    off(eventName: string, listenerId: string): boolean;
   };
 };
 
 export class DOMEventIntegration<T extends EventRegistrationTuple> {
-  private dependencies: DomDependencies<T>;
+  private dependencies: DomDependencies;
   private connected = false;
   private boundHandlers = new Map<string, EventListener>();
 
-  constructor(dependencies: DomDependencies<T>) {
+  constructor(dependencies: DomDependencies) {
     this.dependencies = dependencies;
   }
 
