@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EventBus & DOM Integration 演示</title>
+    <title>EventBus & DOM Integration</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -213,6 +213,14 @@
             color: #e83e8c;
         }
     </style>
+    <script type="importmap">
+        {
+          "imports": {
+            "zod": "https://esm.sh/zod@^4.0.0",
+            "zod/mini": "https://esm.sh/zod@^4.0.0/mini"
+          }
+        }
+    </script>
 </head>
 
 <body>
@@ -316,8 +324,9 @@
         </div>
     </div>
 
-    <script type="module">
-        import { EventBus } from '../src/index.js';
+    <script type="module" defer>
+        import { EventBus } from '../dist/index.mjs';
+        console.log("EventBus", EventBus);
 
         let counterValue = 0;
 
