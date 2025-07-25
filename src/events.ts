@@ -6,6 +6,7 @@ import type {
   InferEventMap,
   TypedEventName,
   StrictEventBus,
+  EventBusOptions,
 } from './types';
 
 // Listener interface
@@ -14,7 +15,10 @@ interface Listener<T = unknown> {
   callback: (data: T) => void | Promise<void>;
 }
 
-// Enhanced EventBus with full type safety
+// Global singleton instance
+let globalEventBusInstance: EventBus | null = null;
+
+// Enhanced EventBus with full type safety and singleton support
 class EventBus<T extends EventRegistrationTuple = never>
   implements StrictEventBus<T>
 {
@@ -25,19 +29,36 @@ class EventBus<T extends EventRegistrationTuple = never>
   private defaultDebounceConfig = new Map<string, number>();
 
   /**
-   * Constructor with optional default events
-   * @param defaultEvents - Optional default event registrations with full type safety
+   * Constructor with optional default events and configuration
    */
-  constructor(defaultEvents?: T) {
+  constructor(defaultEvents?: T, options?: EventBusOptions) {
+    // Apply default debounce configuration if provided
+    if (options?.defaultDebounce) {
+      for (const [event, delay] of Object.entries(options.defaultDebounce)) {
+        this.setDefaultDebounce(event, delay);
+      }
+    }
+
+    // Register default events if provided
     if (defaultEvents) {
       this.registerEvents(defaultEvents);
     }
 
-    this.autoEnableDOMIntegration();
+    // Enable DOM integration if requested
+    if (options?.dom) {
+      this.enableDOMIntegration();
+    }
   }
 
-  private autoEnableDOMIntegration(): void {
-    if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+  /**
+   * Enable DOM integration (lazy initialization)
+   */
+  enableDOMIntegration(): void {
+    if (
+      !this.domIntegration &&
+      typeof window !== 'undefined' &&
+      typeof document !== 'undefined'
+    ) {
       this.domIntegration = new DOMEventIntegration({
         document: window.document,
         eventBus: this,
@@ -47,11 +68,29 @@ class EventBus<T extends EventRegistrationTuple = never>
   }
 
   /**
-   * Register events and listeners with Zod validation
-   * This method can be called multiple times to add more events
+   * Reset global singleton instance
+   */
+  static resetGlobalInstance(): void {
+    if (globalEventBusInstance) {
+      globalEventBusInstance.clear();
+      if (globalEventBusInstance.domIntegration) {
+        globalEventBusInstance.domIntegration.disconnect();
+      }
+    }
+    globalEventBusInstance = null;
+  }
+
+  /**
+   * Check if global instance exists
+   */
+  static hasGlobalInstance(): boolean {
+    return globalEventBusInstance !== null;
+  }
+
+  /**
+   * Register events and listeners
    */
   registerEvents<U extends EventRegistrationTuple>(registrations: U): string[] {
-    // Validate event registrations using Zod
     this.validateEventRegistrations(registrations);
 
     const listenerIds: string[] = [];
@@ -65,19 +104,15 @@ class EventBus<T extends EventRegistrationTuple = never>
       } = registration;
       const eventKey = event as string;
 
-      // Mark the event as registered
       this.registeredEvents.add(eventKey);
 
-      // Set default debounce if specified
       if (debounceTime && debounceTime > 0) {
         this.setDefaultDebounce(eventKey, debounceTime);
       }
 
-      // Register the listener
       const listenerId = this.on(event as keyof InferEventMap<T>, listener);
       listenerIds.push(listenerId);
 
-      // Optional: record registration information
       if (description) {
         console.log(`Registered event: ${eventKey} - ${description}`);
       }
@@ -111,64 +146,16 @@ class EventBus<T extends EventRegistrationTuple = never>
   }
 
   /**
-   * Get all registered DOM-related events
-   */
-  getDOMEvents(): string[] {
-    return this.getRegisteredEvents().filter(
-      (eventName) =>
-        eventName.startsWith('dom:') ||
-        eventName.startsWith('form:') ||
-        eventName.includes('action')
-    );
-  }
-
-  /**
-   * Check if the event is a DOM event
-   */
-  isDOMEvent(eventName: string): boolean {
-    return (
-      eventName.startsWith('dom:') ||
-      eventName.startsWith('form:') ||
-      eventName.includes('action')
-    );
-  }
-
-  /**
    * Validate event registrations using Zod schema
    */
   private validateEventRegistrations<U extends EventRegistrationTuple>(
     registrations: U
   ): void {
-    try {
-      // Basic validation for event registration structure
-      for (const registration of registrations) {
-        if (!registration.event || typeof registration.event !== 'string') {
-          throw new Error(
-            'Event registration must have a valid event name (string)'
-          );
-        }
-        if (
-          !registration.listener ||
-          typeof registration.listener !== 'function'
-        ) {
-          throw new Error(
-            'Event registration must have a valid listener (function)'
-          );
-        }
-        if (
-          registration.description &&
-          typeof registration.description !== 'string'
-        ) {
-          throw new Error('Event registration description must be a string');
-        }
+    // 简化验证，只检查基本结构
+    for (const registration of registrations) {
+      if (!registration.event || typeof registration.listener !== 'function') {
+        throw new Error('Invalid event registration');
       }
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(
-          `Event registration validation failed: ${error.message}`
-        );
-      }
-      throw error;
     }
   }
 
@@ -349,16 +336,39 @@ class EventBus<T extends EventRegistrationTuple = never>
 }
 
 /**
- * Factory function to create a strongly typed EventBus
+ * Factory function to create a strongly typed EventBus singleton
+ * Always returns the same instance - true singleton pattern
  */
 export function createEventBus<T extends EventRegistrationTuple>(
-  defaultEvents?: T
+  defaultEvents?: T,
+  options?: EventBusOptions
 ): StrictEventBus<T> {
-  return new EventBus(defaultEvents);
+  if (globalEventBusInstance) {
+    // Apply options to existing instance
+    if (options?.defaultDebounce) {
+      for (const [event, delay] of Object.entries(options.defaultDebounce)) {
+        globalEventBusInstance.setDefaultDebounce(event, delay);
+      }
+    }
+
+    if (options?.dom) {
+      globalEventBusInstance.enableDOMIntegration();
+    }
+
+    // Register events if provided
+    if (defaultEvents) {
+      globalEventBusInstance.registerEvents(defaultEvents);
+    }
+  } else {
+    globalEventBusInstance = new EventBus(defaultEvents, options);
+  }
+  return globalEventBusInstance as StrictEventBus<T>;
 }
 
 // Legacy TypedEventBus type - maintained for backwards compatibility
 export type TypedEventBus<T extends EventRegistrationTuple> = StrictEventBus<T>;
 
-export { EventBus };
 export type { EventRegistration };
+
+export const getGlobalEventBus = createEventBus;
+export const resetGlobalEventBus = EventBus.resetGlobalInstance;
