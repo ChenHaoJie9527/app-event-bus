@@ -1,4 +1,6 @@
 import React from 'react';
+import { SplittingText } from '@/components/animate-ui/text/splitting';
+import { BubbleBackground } from '@/components/animate-ui/backgrounds/bubble';
 
 const codeString = `import { EventBus } from 'small-event-system';
 
@@ -32,6 +34,10 @@ const Hero: React.FC = () => {
 
   return (
     <section className="hero" id="home">
+      <BubbleBackground
+        className="absolute inset-0 flex items-center justify-center"
+        interactive
+      />
       <div className="hero-container">
         <div className="hero-content">
           <h1 className="hero-title">
@@ -39,8 +45,10 @@ const Hero: React.FC = () => {
             <span className="highlight">for Modern Apps</span>
           </h1>
           <p className="hero-description">
-            A lightweight, type-safe event bus system built with TypeScript.
-            Designed around the Observer Pattern with separation of concerns.
+            <SplittingText
+              text="A lightweight, type-safe event bus system built with TypeScript. Designed around the Observer Pattern with separation of concerns."
+              type="chars"
+            />
           </p>
           <div className="hero-buttons">
             <button
