@@ -293,6 +293,18 @@
         </div>
 
         <div class="demo-section">
+            <h2>🔧 Singleton Pattern Test</h2>
+            <p>Verify that EventBus uses singleton pattern correctly:</p>
+
+            <div class="button-group">
+                <button class="btn-primary" onclick="testSingleton()">Test Singleton</button>
+                <button class="btn-secondary" onclick="testMultipleInstances()">Test Multiple Instances</button>
+                <button class="btn-warning" data-action="singleton-test" data-message="DOM triggered singleton test">DOM
+                    Singleton Test</button>
+            </div>
+        </div>
+
+        <div class="demo-section">
             <h2>🎯 system features</h2>
             <div class="feature-list">
                 <div class="feature-card">
@@ -311,6 +323,10 @@
                     <h4>🧹 resource management</h4>
                     <p>automatic cleanup and memory leak protection</p>
                 </div>
+                <div class="feature-card">
+                    <h4>⚙️ smart configuration</h4>
+                    <p>automatic DOM integration and debounce configuration through options</p>
+                </div>
             </div>
         </div>
 
@@ -325,8 +341,7 @@
     </div>
 
     <script type="module" defer>
-        import { EventBus } from '../dist/index.mjs';
-        console.log("EventBus", EventBus);
+        import { createEventBus, getGlobalEventBus } from '../dist/index.mjs';
 
         let counterValue = 0;
 
@@ -336,6 +351,7 @@
                 listener: (data) => {
                     updateCounter(parseInt(data.amount) || 1);
                     showToast(`counter increased ${data.amount}`, 'success');
+                    log(`Global EventBus instance ID: ${eventBus.constructor.name}`, 'info');
                 },
                 description: 'counter increased event',
                 debounce: 300
@@ -396,12 +412,38 @@
                     showToast('operation failed, please try again', 'error');
                 },
                 description: 'DOM action error event'
+            },
+            {
+                event: 'singleton:test',
+                listener: (data) => {
+                    log(`Singleton test: ${data.message}`, 'success');
+                    showToast('Singleton working!', 'success');
+                },
+                description: 'Test singleton functionality'
             }
         ];
 
-        const eventBus = new EventBus(appEvents);
+        // 使用新的配置选项创建EventBus
+        const eventBus = createEventBus(appEvents, {
+            dom: true, // 自动启用DOM集成
+            defaultDebounce: {
+                'user:action': 500,
+                'api:request': 1000,
+            },
+        });
 
-        log('EventBus initialized, DOM integration automatically enabled', 'success');
+        const anotherInstance = getGlobalEventBus();
+        const isTheSameInstance = eventBus === anotherInstance;
+
+        log(`EventBus initialized as singleton: ${isTheSameInstance}`, isTheSameInstance ? 'success' : 'error');
+        log(`DOM integration enabled: ${eventBus.isDOMIntegrationEnabled()}`, 'info');
+
+        setTimeout(() => {
+            const testInstance = getGlobalEventBus();
+            testInstance.emit('singleton:test', {
+                message: 'Event from another instance reference'
+            });
+        }, 2000);
 
         function handleDOMAction(data) {
             const { action, data: actionData } = data;
@@ -427,6 +469,11 @@
                     eventBus.emit('notification:show', {
                         message: actionData.message,
                         type: actionData.type
+                    });
+                    break;
+                case 'singleton-test':
+                    eventBus.emit('singleton:test', {
+                        message: actionData.message || 'DOM singleton test'
                     });
                     break;
                 default:
@@ -505,8 +552,34 @@
 
         window.clearLog = clearLog;
 
-        log('EventBus demo initialized', 'success');
-        showToast('demo system ready!', 'success');
+        window.testSingleton = () => {
+            const instance1 = getGlobalEventBus();
+            const instance2 = getGlobalEventBus();
+            const instance3 = createEventBus();
+
+            const allSame = instance1 === instance2 && instance2 === instance3;
+
+            log(`Singleton test: All instances are the same: ${allSame}`, allSame ? 'success' : 'error');
+
+            if (allSame) {
+                instance1.emit('singleton:test', { message: 'Singleton pattern working correctly!' });
+            }
+        }
+
+        window.testMultipleInstances = () => {
+            const independentInstance = createEventBus([]);
+            const globalInstance = getGlobalEventBus();
+
+            const areDifferent = independentInstance !== globalInstance;
+
+            log(`Independent instance test: Different from global: ${areDifferent}`, areDifferent ? 'success' : 'error');
+
+            log(`Global instance type: ${globalInstance.constructor.name}`, 'info');
+            log(`Independent instance type: ${independentInstance.constructor.name}`, 'info');
+        }
+
+        log('EventBus demo initialized with new configuration options', 'success');
+        showToast('demo system ready with smart configuration!', 'success');
     </script>
 </body>
 
