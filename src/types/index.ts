@@ -96,6 +96,13 @@ export type StrictEventBus<T extends EventRegistrationTuple> = {
   hasListeners(event: TypedEventName<T>): boolean;
   clear(): void;
   clearEvent(event: TypedEventName<T>): boolean;
+  // DOM integration methods
+  enableDOMIntegration(): void;
+  disableDOMIntegration(): void;
+  getDOMIntegration(): any;
+  isDOMIntegrationEnabled(): boolean;
+  // Configuration methods
+  setDefaultDebounce(event: string, delay: number): void;
 };
 
 export type DOMEventData = {
@@ -121,3 +128,18 @@ export type DOMEventData = {
     originalEvent: Event;
   };
 };
+
+// EventBus configuration options
+export interface EventBusOptions {
+  /**
+   * Enable DOM integration automatically
+   * @default false
+   */
+  dom?: boolean;
+
+  /**
+   * Default debounce configuration for events
+   * @default {}
+   */
+  defaultDebounce?: Record<string, number>;
+}
