@@ -13,25 +13,25 @@
         "useValidAriaRole": "off",
         "noLabelWithoutControl": "warn",
         "useKeyWithClickEvents": "off",
-        "noStaticElementInteractions": "off"
+        "noStaticElementInteractions": "off",
+        "useValidAnchor": "off"
       },
       "style": {
         "useImportType": "off",
-        "noExportedImports": "off"
+        "noExportedImports": "off",
+        "noNestedTernary": "off"
       },
       "correctness": {
         "useJsxKeyInIterable": "warn",
         "useExhaustiveDependencies": "off",
-        "noUnusedVariables": "warn"
+        "noUnusedVariables": "warn",
+        "noUndeclaredDependencies": "off"
       },
       "suspicious": {
         "noImplicitAnyLet": "warn",
         "noArrayIndexKey": "warn",
         "noConsole": "off",
         "noExplicitAny": "warn"
-      },
-      "a11y": {
-        "useValidAnchor": "off"
       }
     }
   },
