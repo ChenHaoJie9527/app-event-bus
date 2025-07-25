@@ -1,13 +1,15 @@
-import React from 'react'
+import React from 'react';
 
 const Footer: React.FC = () => {
   return (
     <footer className="footer">
       <div className="container">
-        <p>&copy; 2024 EventBus. Built with ❤️ for modern JavaScript applications.</p>
+        <p>
+          &copy; 2024 EventBus. Built with ❤️ for modern JavaScript applications.
+        </p>
       </div>
     </footer>
-  )
-}
+  );
+};
 
-export default Footer 
+export default Footer;

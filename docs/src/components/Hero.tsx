@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 
 const codeString = `import { EventBus } from 'small-event-system';
 
@@ -17,21 +17,21 @@ await eventBus.emit('user:login', {
 
 const Hero: React.FC = () => {
   const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId)
+    const element = document.getElementById(sectionId);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' })
+      element.scrollIntoView({ behavior: 'smooth' });
     }
-  }
+  };
 
   const copyCode = (codeId: string) => {
-    const codeElement = document.getElementById(codeId)
+    const codeElement = document.getElementById(codeId);
     if (codeElement) {
-      navigator.clipboard.writeText(codeElement.textContent || '')
+      navigator.clipboard.writeText(codeElement.textContent || '');
     }
-  }
+  };
 
   return (
-    <section id="home" className="hero">
+    <section className="hero" id="home">
       <div className="hero-container">
         <div className="hero-content">
           <h1 className="hero-title">
@@ -39,26 +39,48 @@ const Hero: React.FC = () => {
             <span className="highlight">for Modern Apps</span>
           </h1>
           <p className="hero-description">
-            A lightweight, type-safe event bus system built with TypeScript. Designed around the Observer Pattern with
-            separation of concerns.
+            A lightweight, type-safe event bus system built with TypeScript.
+            Designed around the Observer Pattern with separation of concerns.
           </p>
           <div className="hero-buttons">
-            <button className="btn btn-primary" onClick={() => scrollToSection('examples')}>View Examples</button>
-            <button className="btn btn-secondary" onClick={() => scrollToSection('api')}>API Reference</button>
+            <button
+              className="btn btn-primary"
+              onClick={() => scrollToSection('examples')}
+              type="button"
+            >
+              View Examples
+            </button>
+            <button
+              className="btn btn-secondary"
+              onClick={() => scrollToSection('api')}
+              type="button"
+            >
+              API Reference
+            </button>
           </div>
         </div>
         <div className="hero-code">
           <div className="code-block">
             <div className="code-header">
               <span>Quick Start</span>
-              <button className="copy-btn" onClick={() => copyCode('quick-start-code')}>Copy</button>
+              <button
+                className="copy-btn"
+                onClick={() => copyCode('quick-start-code')}
+                type="button"
+              >
+                Copy
+              </button>
             </div>
-            <pre><code id="quick-start-code" className="language-typescript">{codeString}</code></pre>
+            <pre>
+              <code className="language-typescript" id="quick-start-code">
+                {codeString}
+              </code>
+            </pre>
           </div>
         </div>
       </div>
     </section>
-  )
-}
+  );
+};
 
-export default Hero 
+export default Hero;

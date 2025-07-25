@@ -29,6 +29,9 @@
         "noArrayIndexKey": "warn",
         "noConsole": "off",
         "noExplicitAny": "warn"
+      },
+      "a11y": {
+        "useValidAnchor": "off"
       }
     }
   },

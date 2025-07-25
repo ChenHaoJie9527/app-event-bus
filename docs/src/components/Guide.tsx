@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-// @ts-expect-error
 import Prism from 'prismjs';
 import 'prismjs/components/prism-typescript';
 import 'prismjs/components/prism-bash';
