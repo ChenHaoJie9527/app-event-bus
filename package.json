@@ -19,24 +19,19 @@
     "build:docs": "cd docs && npm run build",
     "preview:docs": "cd docs && npm run preview"
   },
-  "files": {
-    "includes": [
-      "src/api/**/*",
-      "src/components/**/*",
-      "src/constants/**/*",
-      "src/features/**/*",
-      "src/hooks/**/*",
-      "src/pages/**/*",
-      "src/renderer/**/*",
-      "src/router/**/*",
-      "src/store/**/*",
-      "src/utils/**/*",
-      "src/workers/**/*",
-      "docs/**/*"
-    ]
-  },
-  "main": "dist/index.js",
+  "files": [
+    "dist/**/*",
+    "README.md"
+  ],
+  "main": "dist/index.mjs",
   "module": "dist/index.mjs",
+  "types": "dist/index.d.mts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.mts"
+    }
+  },
   "devDependencies": {
     "@biomejs/biome": "2.1.2",
     "husky": "^9.1.7",
