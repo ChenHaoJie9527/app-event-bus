@@ -8,6 +8,15 @@
       "performance": {
         "noNamespaceImport": "off"
       },
+      "complexity": {
+        "noExcessiveCognitiveComplexity": "off"
+      },
+      "nursery": {
+        "noAwaitInLoop": "warn"
+      },
+      "security": {
+        "noDangerouslySetInnerHtml": "warn"
+      },
       "a11y": {
         "useAltText": "off",
         "useValidAriaRole": "off",
