@@ -5,7 +5,7 @@ const Footer: React.FC = () => {
     <footer className="footer">
       <div className="container">
         <p>
-          &copy; 2024 EventBus. Built with ❤️ for modern JavaScript applications.
+          &copy; 2025 EventBus. Built with ❤️ for modern JavaScript applications.
         </p>
       </div>
     </footer>

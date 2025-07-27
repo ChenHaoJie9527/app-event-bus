@@ -1,7 +1,5 @@
 import React, { useEffect } from 'react';
-import Prism from 'prismjs';
-import 'prismjs/components/prism-typescript';
-import 'prismjs/components/prism-bash';
+import { usePrism } from '@/providers/PrismProvider';
 
 const steps = [
   {
@@ -70,8 +68,9 @@ await eventBus.emit('form:submit', {
 ];
 
 const Guide: React.FC = () => {
+  const { highlight } = usePrism();
   useEffect(() => {
-    Prism.highlightAll();
+    highlight();
   }, []);
 
   return (

@@ -66,12 +66,10 @@ try {
 const Examples: React.FC = () => {
   const { highlight } = usePrism();
 
-  // 每个示例的 tab 状态
   const [basicTab, setBasicTab] = useState<'code' | 'demo'>('code');
   const [multiTab, setMultiTab] = useState<'code' | 'demo'>('code');
   const [errorTab, setErrorTab] = useState<'code' | 'demo'>('code');
 
-  // Demo 输出状态
   const [basicOutput, setBasicOutput] = useState<string>(
     'Click "Run Demo" to see the example in action...'
   );
@@ -114,10 +112,8 @@ const Examples: React.FC = () => {
   const runBasicDemo = async () => {
     setBasicOutput('Running demo...\n');
 
-    // 清空之前的监听器
     mockEventBus.listeners.clear();
 
-    // 注册监听器
     mockEventBus.on('user:login', (data: any) => {
       const message = `User logged in: ${data.userId}`;
       setBasicOutput((prev) => `${prev}${message}\n`);
@@ -130,10 +126,8 @@ const Examples: React.FC = () => {
       return message;
     });
 
-    // 模拟延迟
     await new Promise((resolve) => setTimeout(resolve, 500));
 
-    // 触发事件
     await mockEventBus.emit('user:login', {
       userId: 'user123',
       timestamp: Date.now(),
@@ -145,10 +139,8 @@ const Examples: React.FC = () => {
   const runMultipleDemo = async () => {
     setMultiOutput('Running demo...\n');
 
-    // 清空之前的监听器
     mockEventBus.listeners.clear();
 
-    // 注册多个监听器
     mockEventBus.on('data:fetch', (data: any) => {
       const message = `Handler 1: ${data.endpoint}`;
       setMultiOutput((prev) => `${prev}${message}\n`);
@@ -168,7 +160,6 @@ const Examples: React.FC = () => {
       return message;
     });
 
-    // 触发事件
     await mockEventBus.emit('data:fetch', {
       endpoint: '/api/users',
     });
@@ -179,27 +170,22 @@ const Examples: React.FC = () => {
   const runErrorDemo = async () => {
     setErrorOutput('Running demo...\n');
 
-    // 清空之前的监听器
     mockEventBus.listeners.clear();
 
-    // 注册会抛出错误的监听器
     mockEventBus.on('user:login', () => {
       const message = 'Error: Login failed';
       setErrorOutput((prev) => `${prev}${message}\n`);
       throw new Error('Login failed');
     });
 
-    // 注册正常执行的监听器
     mockEventBus.on('user:login', (data: any) => {
       const message = `This still executes: ${data.userId}`;
       setErrorOutput((prev) => `${prev}${message}\n`);
       return message;
     });
 
-    // 模拟延迟
     await new Promise((resolve) => setTimeout(resolve, 500));
 
-    // 触发事件并捕获错误
     try {
       await mockEventBus.emit('user:login', {
         userId: 'user123',

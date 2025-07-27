@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
-import Prism from 'prismjs';
-import 'prismjs/components/prism-typescript';
+import { usePrism } from '@/providers/PrismProvider';
 
 const apiList = [
   {
@@ -35,8 +34,9 @@ const apiList = [
 ];
 
 const Api: React.FC = () => {
+  const { highlight } = usePrism();
   useEffect(() => {
-    Prism.highlightAll();
+    highlight();
   }, []);
 
   return (
