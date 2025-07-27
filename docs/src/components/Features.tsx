@@ -1,6 +1,7 @@
-import React from 'react';
+import { FC } from 'react';
+import { MotionEffect } from './animate-ui/effects/motion-effect';
 
-const Features: React.FC = () => {
+const Features: FC = () => {
   const features = [
     {
       icon: '🔒',
@@ -56,11 +57,28 @@ const Features: React.FC = () => {
         <h2 className="section-title">Why EventBus?</h2>
         <div className="features-grid">
           {features.map((feature, index) => (
-            <div className="feature-card" key={index}>
-              <div className="feature-icon">{feature.icon}</div>
-              <h3>{feature.title}</h3>
-              <p>{feature.description}</p>
-            </div>
+            <MotionEffect
+              blur="8px"
+              className="feature-card"
+              delay={0.1 + index * 0.1}
+              fade={{ initialOpacity: 0 }}
+              inView
+              key={index}
+              slide={{ direction: 'up', offset: 80 }}
+              transition={{
+                type: 'spring',
+                stiffness: 180,
+                damping: 12,
+                mass: 1.2,
+              }}
+              zoom={{ initialScale: 0.6, scale: 1 }}
+            >
+              <div>
+                <div className="feature-icon">{feature.icon}</div>
+                <h3>{feature.title}</h3>
+                <p>{feature.description}</p>
+              </div>
+            </MotionEffect>
           ))}
         </div>
       </div>
