@@ -5,10 +5,11 @@ import Examples from '@/components/Examples';
 import Api from '@/components/Api';
 import Guide from '@/components/Guide';
 import Footer from '@/components/Footer';
+import { PrismProvider } from '@/providers/PrismProvider';
 
 function App() {
   return (
-    <>
+    <PrismProvider>
       <Navbar />
       <main>
         <Hero />
@@ -18,7 +19,7 @@ function App() {
         <Guide />
       </main>
       <Footer />
-    </>
+    </PrismProvider>
   );
 }
 
