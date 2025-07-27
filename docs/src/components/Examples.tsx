@@ -1,8 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import Prism from 'prismjs';
-import 'prismjs/components/prism-typescript';
-import 'prismjs/components/prism-javascript';
-import 'prismjs/themes/prism-tomorrow.css';
+import { useEffect, useState } from 'react';
+import { usePrism } from '@/providers/PrismProvider';
 
 const basicCode = `// Define event types
 interface AppEventMap {
@@ -67,6 +64,8 @@ try {
 }`;
 
 const Examples: React.FC = () => {
+  const { highlight } = usePrism();
+
   // 每个示例的 tab 状态
   const [basicTab, setBasicTab] = useState<'code' | 'demo'>('code');
   const [multiTab, setMultiTab] = useState<'code' | 'demo'>('code');
@@ -84,9 +83,8 @@ const Examples: React.FC = () => {
   );
 
   useEffect(() => {
-    Prism.highlightAll();
-  }, [basicTab, multiTab, errorTab]);
-
+    highlight();
+  }, [basicTab, multiTab, errorTab, highlight]);
   const mockEventBus = {
     listeners: new Map(),
     on: (event: string, handler: (data: any) => void) => {
