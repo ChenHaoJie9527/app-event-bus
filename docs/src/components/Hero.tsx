@@ -1,6 +1,7 @@
-import React from 'react';
+import { FC } from 'react';
 import { SplittingText } from '@/components/animate-ui/text/splitting';
 import { BubbleBackground } from '@/components/animate-ui/backgrounds/bubble';
+import { CodeTypewriter } from '@/components/animate-ui/text/code-typewriter';
 
 const codeString = `import { EventBus } from 'small-event-system';
 
@@ -17,7 +18,7 @@ await eventBus.emit('user:login', {
   timestamp: Date.now() 
 });`;
 
-const Hero: React.FC = () => {
+const Hero: FC = () => {
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
@@ -68,7 +69,7 @@ const Hero: React.FC = () => {
           </div>
         </div>
         <div className="hero-code">
-          <div className="code-block">
+          <div className="code-block h-[460px]">
             <div className="code-header">
               <span>Quick Start</span>
               <button
@@ -79,9 +80,13 @@ const Hero: React.FC = () => {
                 Copy
               </button>
             </div>
-            <pre>
+            <pre className="min-h-full">
               <code className="language-typescript" id="quick-start-code">
-                {codeString}
+                <CodeTypewriter
+                  duration={4}
+                  language="typescript"
+                  text={codeString}
+                />
               </code>
             </pre>
           </div>
