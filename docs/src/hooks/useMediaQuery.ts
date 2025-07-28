@@ -1,60 +1,117 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import type { MediaQueryString, MediaQueryPreset } from './mediaQueryTypes';
 import { MediaQueryPresets } from './mediaQueryTypes';
+
+// Using the isomorphic layout effect to avoid SSR issues
+const useIsomorphicLayoutEffect =
+  typeof window !== 'undefined' ? useLayoutEffect : useEffect;
+
+// Server-side detection
+const IS_SERVER = typeof window === 'undefined';
+
+// Hook options type
+type UseMediaQueryOptions = {
+  /**
+   * Default value when rendering on the server
+   * @default false
+   */
+  defaultValue?: boolean;
+  /**
+   * Whether to read the media query state on initialization
+   * Should be set to false in SSR, returning options.defaultValue or false
+   * @default true
+   */
+  initializeWithValue?: boolean;
+};
 
 /**
  * Custom hook that wraps the matchMedia API to listen for media query changes
  *
  * @example
  * ```tsx
- * // Using preset (with type hints)
+ * // Using presets (with type hints)
  * const isMobile = useMediaQuery('mobile');
  * const isDarkMode = useMediaQuery('darkMode');
  *
- * // Using custom media query
+ * // Using custom queries
  * const isLargeScreen = useMediaQuery('(min-width: 1440px)');
  * const isTouchDevice = useMediaQuery('(pointer: coarse)');
+ *
+ * // Using options
+ * const isMobile = useMediaQuery('mobile', {
+ *   defaultValue: true,
+ *   initializeWithValue: false
+ * });
  * ```
  */
 
-export function useMediaQuery(query: MediaQueryPreset): boolean;
-export function useMediaQuery(query: MediaQueryString): boolean;
+// Function overload - provide precise type hints for presets
 export function useMediaQuery(
-  query: MediaQueryString | MediaQueryPreset
+  query: MediaQueryPreset,
+  options?: UseMediaQueryOptions
+): boolean;
+// Function overload - provide type checking for custom queries
+export function useMediaQuery(
+  query: MediaQueryString,
+  options?: UseMediaQueryOptions
+): boolean;
+// Implementation signature
+export function useMediaQuery(
+  query: MediaQueryString | MediaQueryPreset,
+  {
+    defaultValue = false,
+    initializeWithValue = true,
+  }: UseMediaQueryOptions = {}
 ): boolean {
   // Resolve preset to actual query string
   const actualQuery = MediaQueryPresets[query as MediaQueryPreset] || query;
 
-  const [matches, setMatches] = useState<boolean>(() => {
-    // Initialize with the current match state
-    if (typeof window !== 'undefined' && window.matchMedia) {
-      return window.matchMedia(actualQuery).matches;
+  // Get matching state function
+  const getMatches = (_query: string): boolean => {
+    if (IS_SERVER) {
+      return defaultValue;
     }
-    return false;
+    return window.matchMedia(_query).matches;
+  };
+
+  // Initialize state
+  const [matches, setMatches] = useState<boolean>(() => {
+    if (initializeWithValue) {
+      return getMatches(actualQuery);
+    }
+    return defaultValue;
   });
 
-  useEffect(() => {
-    // Early return if not in browser environment
-    if (typeof window === 'undefined' || !window.matchMedia) {
+  // Handle media query changes
+  const handleChange = () => {
+    setMatches(getMatches(actualQuery));
+  };
+
+  // Using the isomorphic layout effect to avoid SSR issues
+  useIsomorphicLayoutEffect(() => {
+    if (IS_SERVER) {
       return;
     }
 
-    const mediaQuery = window.matchMedia(actualQuery);
+    const matchMedia = window.matchMedia(actualQuery);
 
-    // Set initial state
-    setMatches(mediaQuery.matches);
+    // Trigger on initial client load and query changes
+    handleChange();
 
-    // Create event listener function
-    const handleChange = (event: MediaQueryListEvent) => {
-      setMatches(event.matches);
-    };
+    // Use addListener and removeListener to support Safari < 14
+    if (matchMedia.addListener) {
+      matchMedia.addListener(handleChange);
+    } else {
+      matchMedia.addEventListener('change', handleChange);
+    }
 
-    // Add event listener
-    mediaQuery.addEventListener('change', handleChange);
-
-    // Cleanup function to remove event listener
+    // Cleanup function
     return () => {
-      mediaQuery.removeEventListener('change', handleChange);
+      if (matchMedia.removeListener) {
+        matchMedia.removeListener(handleChange);
+      } else {
+        matchMedia.removeEventListener('change', handleChange);
+      }
     };
   }, [actualQuery]);
 
