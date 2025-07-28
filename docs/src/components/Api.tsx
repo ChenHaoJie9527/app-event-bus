@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { usePrism } from '@/providers/PrismProvider';
+import { useOnceEffect } from '@/hooks/useOnceEffect';
 
 const apiList = [
   {
@@ -35,9 +36,10 @@ const apiList = [
 
 const Api: React.FC = () => {
   const { highlight } = usePrism();
-  useEffect(() => {
+
+  useOnceEffect(() => {
     highlight();
-  }, []);
+  });
 
   return (
     <section className="api" id="api">
