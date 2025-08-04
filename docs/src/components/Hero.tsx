@@ -3,20 +3,28 @@ import { SplittingText } from '@/components/animate-ui/text/splitting';
 import { BubbleBackground } from '@/components/animate-ui/backgrounds/bubble';
 import { CodeTypewriter } from '@/components/animate-ui/text/code-typewriter';
 
-const codeString = `import { EventBus } from 'small-event-system';
+const codeString = `import { createEventBus } from 'small-event-system';
 
-const eventBus = new EventBus();
+const eventRegistrations = [
+  {
+    event: 'user:login',
+    listener: (data) => {
+      console.log('User logged in:', data);
+    },
+  },
+  ...
+] as const;
+const eventBus = createEventBus(eventRegistrations);
 
-// Register listener
-const listenerId = eventBus.on('user:login', (data) => {
-  console.log('User logged in:', data);
-});
-
-// Emit event
 await eventBus.emit('user:login', { 
   userId: '123', 
   timestamp: Date.now() 
-});`;
+});
+
+eventBus.on('user:login', (data) => {
+  console.log('User logged in:', data);
+});
+`;
 
 const Hero: FC = () => {
   const scrollToSection = (sectionId: string) => {
@@ -69,7 +77,7 @@ const Hero: FC = () => {
           </div>
         </div>
         <div className="hero-code">
-          <div className="code-block h-[460px]">
+          <div className="code-block h-[560px]">
             <div className="code-header">
               <span>Quick Start</span>
               <button
