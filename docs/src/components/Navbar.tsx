@@ -73,7 +73,16 @@ const Navbar: React.FC = () => {
           </li>
           <li>
             <a
-              href="https://github.com/your-repo"
+              href="https://papillon-x.netlify.app/"
+              rel="noopener"
+              target="_blank"
+            >
+              Blog
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://github.com/ChenHaoJie9527/small-event-system"
               rel="noopener"
               target="_blank"
             >
